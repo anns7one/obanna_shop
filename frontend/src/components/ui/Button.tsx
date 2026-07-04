@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { ButtonHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
-import styles from "./Button.module.css";
 
 type Variant = "primary" | "secondary" | "ghost" | "danger";
 type Size = "sm" | "md" | "lg";
@@ -34,10 +33,10 @@ export function Button({
   ...props
 }: ButtonProps) {
   const classes = cn(
-    styles.btn,
-    styles[variant],
-    styles[size],
-    fullWidth && styles.full,
+    "btn",
+    `btn-${variant}`,
+    `btn-${size}`,
+    fullWidth && "btn-full",
     className,
   );
 

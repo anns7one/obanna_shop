@@ -7,7 +7,6 @@ import { PriceTag } from "@/components/ui/PriceTag";
 import { ProductActions } from "@/components/product/ProductActions";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { getCategory } from "@/lib/data/categories";
-import styles from "./page.module.css";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
@@ -31,37 +30,37 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const category = getCategory(product.category);
 
   return (
-    <div className={styles.container}>
-      <nav className={styles.crumbs}>
-        <Link href="/catalog" className={styles.link}>
+    <div className="product-page">
+      <nav className="product-page-crumbs">
+        <Link href="/catalog" className="product-page-crumbs-link">
           Shop
         </Link>
         {" / "}
-        <Link href={`/catalog?category=${product.category}`} className={styles.link}>
+        <Link href={`/catalog?category=${product.category}`} className="product-page-crumbs-link">
           {category?.name}
         </Link>
         {" / "}
-        <span className={styles.current}>{product.title}</span>
+        <span className="product-page-current">{product.title}</span>
       </nav>
 
-      <div className={styles.layout}>
-        <div className={styles.frame}>
-          <ProductImagePlaceholder title={product.title} category={product.category} className={styles.image} />
+      <div className="product-page-layout">
+        <div className="product-page-frame">
+          <ProductImagePlaceholder title={product.title} category={product.category} className="product-page-image" />
         </div>
 
-        <div className={styles.details}>
+        <div className="product-page-details">
           <div>
-            <h1 className={styles.name}>{product.title}</h1>
-            <div className={styles.price}>
+            <h1 className="product-page-name">{product.title}</h1>
+            <div className="product-page-price">
               <PriceTag price={product.price} compareAtPrice={product.compareAtPrice} size="lg" />
             </div>
           </div>
 
-          <p className={styles.desc}>{product.description}</p>
+          <p className="product-page-desc">{product.description}</p>
 
           <ProductActions product={product} />
 
-          <p className={styles.stock}>
+          <p className="product-page-stock">
             {product.stock > 0 ? `${product.stock} in stock` : "Currently unavailable"} · Free returns
             within 30 days.
           </p>
@@ -69,9 +68,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
       </div>
 
       {related.length > 0 && (
-        <section className={styles.related}>
-          <h2 className={styles.title}>You may also like</h2>
-          <div className={styles.grid}>
+        <section className="product-page-related">
+          <h2 className="product-page-related-title">You may also like</h2>
+          <div className="product-page-related-grid">
             <ProductGrid products={related} />
           </div>
         </section>

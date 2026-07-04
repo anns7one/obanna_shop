@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { LoginForm } from "@/components/auth/LoginForm";
-import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Sign in — Obanna",
@@ -9,10 +8,10 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>Welcome back</h1>
-      <p className={styles.subtitle}>Sign in to view your orders and saved pieces.</p>
-      <div className={styles.card}>
+    <div className="login-page">
+      <h1 className="login-page-title">Welcome back</h1>
+      <p className="login-page-subtitle">Sign in to view your orders and saved pieces.</p>
+      <div className="login-page-card">
         <Suspense fallback={null}>
           <LoginForm />
         </Suspense>

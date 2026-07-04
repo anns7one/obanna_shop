@@ -4,18 +4,8 @@ import { useSearchParams } from "next/navigation";
 import { AuthGuard } from "@/components/auth/AuthGuard";
 import { useAuthStore } from "@/store/authStore";
 import { useMyOrders } from "@/hooks/useOrders";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { formatPrice } from "@/lib/utils";
-import type { OrderStatus } from "@/lib/types";
-import styles from "./OrdersView.module.css";
-
-const statusTone: Record<OrderStatus, "blush" | "sky" | "butter" | "ink"> = {
-  processing: "butter",
-  confirmed: "sky",
-  shipped: "sky",
-  delivered: "blush",
-};
+import { OrderCard } from "@/components/account/OrderCard";
 
 export function OrdersView() {
   return (
@@ -28,59 +18,57 @@ export function OrdersView() {
 function OrdersContent() {
   const searchParams = useSearchParams();
   const user = useAuthStore((s) => s.user);
-  const { data: orders, isLoading } = useMyOrders(user?.id);
+  const { data: orders, isLoading, isError, error, refetch } = useMyOrders(user?.id);
   const justPlacedOrder = searchParams.get("success") === "1";
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>Order history</h1>
+    <div className="orders">
+      <h1 className="orders-title">Order history</h1>
 
-      {justPlacedOrder && <div className={styles.success}>Thank you — your order has been placed.</div>}
+      {justPlacedOrder && (
+        <div className="orders-success" role="status" aria-live="polite">
+          Thank you — your order has been placed.
+        </div>
+      )}
 
-      <div className={styles.list}>
-        {isLoading && <p className={styles.loading}>Loading your orders…</p>}
+      {isError && (
+        <div className="data-error" role="alert">
+          <p>{error instanceof Error ? error.message : "Something went wrong loading your orders."}</p>
+          <Button variant="secondary" size="sm" onClick={() => refetch()}>
+            Try again
+          </Button>
+        </div>
+      )}
 
-        {!isLoading && orders?.length === 0 && (
-          <div className={styles.empty}>
-            <p className={styles.emptyTitle}>No orders yet</p>
-            <Button href="/catalog">Start shopping</Button>
-          </div>
-        )}
-
-        {orders?.map((order) => (
-          <div key={order.id} className={styles.order}>
-            <div className={styles.head}>
-              <div>
-                <p className={styles.id}>Order #{order.id.slice(0, 8)}</p>
-                <p className={styles.date}>
-                  {new Date(order.createdAt).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </p>
-              </div>
-              <Badge tone={statusTone[order.status]}>{order.status}</Badge>
+      {isLoading && (
+        <div className="orders-list">
+          <p className="sr-only" role="status">
+            Loading your orders…
+          </p>
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="orders-skeleton-card">
+              <div className="orders-skeleton-line orders-skeleton-line-title" />
+              <div className="orders-skeleton-line orders-skeleton-line-short" />
+              <div className="orders-skeleton-block" />
             </div>
+          ))}
+        </div>
+      )}
 
-            <ul className={styles.items}>
-              {order.items.map((item, idx) => (
-                <li key={idx} className={styles.item}>
-                  <span>
-                    {item.title} ({item.color}, {item.size}) × {item.quantity}
-                  </span>
-                  <span className={styles.price}>{formatPrice(item.price * item.quantity)}</span>
-                </li>
-              ))}
-            </ul>
-
-            <div className={styles.total}>
-              <span>Total</span>
-              <span>{formatPrice(order.totalPrice)}</span>
+      {!isLoading && !isError && (
+        <div className="orders-list">
+          {orders?.length === 0 && (
+            <div className="orders-empty">
+              <p className="orders-empty-title">No orders yet</p>
+              <Button href="/catalog">Start shopping</Button>
             </div>
-          </div>
-        ))}
-      </div>
+          )}
+
+          {orders?.map((order) => (
+            <OrderCard key={order.id} order={order} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

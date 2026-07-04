@@ -10,7 +10,6 @@ import { loginUser, AuthError } from "@/lib/api/auth";
 import { useAuthStore } from "@/store/authStore";
 import { Input } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
-import styles from "./AuthForm.module.css";
 
 export function LoginForm() {
   const router = useRouter();
@@ -36,7 +35,7 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className={styles.form}>
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="auth-form">
       <Input
         id="email"
         label="Email"
@@ -55,7 +54,7 @@ export function LoginForm() {
       />
 
       {formError && (
-        <p role="alert" className={styles.error}>
+        <p role="alert" className="auth-form-error">
           {formError}
         </p>
       )}
@@ -64,9 +63,9 @@ export function LoginForm() {
         {isSubmitting ? "Signing in…" : "Sign in"}
       </Button>
 
-      <p className={styles.footer}>
+      <p className="auth-form-footer">
         New here?{" "}
-        <Link href="/register" className={styles.link}>
+        <Link href="/register" className="auth-form-link">
           Create an account
         </Link>
       </p>

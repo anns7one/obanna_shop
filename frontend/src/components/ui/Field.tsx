@@ -1,6 +1,5 @@
 import type { InputHTMLAttributes, SelectHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
-import styles from "./Field.module.css";
 
 interface FieldWrapperProps {
   label: string;
@@ -19,15 +18,15 @@ function FieldWrapper({
   children,
 }: FieldWrapperProps & { children: React.ReactNode }) {
   return (
-    <div className={styles.field}>
-      <label htmlFor={id} className={styles.label}>
+    <div className="field">
+      <label htmlFor={id} className="field-label">
         {label}
-        {required && <span className={styles.required}> *</span>}
+        {required && <span className="field-required"> *</span>}
       </label>
       {children}
-      {hint && !error && <p className={styles.hint}>{hint}</p>}
+      {hint && !error && <p className="field-hint">{hint}</p>}
       {error && (
-        <p role="alert" className={styles.error}>
+        <p role="alert" className="field-error">
           {error}
         </p>
       )}
@@ -42,7 +41,7 @@ export function Input({ label, error, hint, required, id, className, ...props }:
     <FieldWrapper label={label} id={id} error={error} hint={hint} required={required}>
       <input
         id={id}
-        className={cn(styles.input, error && styles.invalid, className)}
+        className={cn("field-input", error && "field-input-invalid", className)}
         aria-invalid={Boolean(error)}
         required={required}
         {...props}
@@ -58,7 +57,7 @@ export function Textarea({ label, error, hint, required, id, className, ...props
     <FieldWrapper label={label} id={id} error={error} hint={hint} required={required}>
       <textarea
         id={id}
-        className={cn(styles.input, styles.textarea, error && styles.invalid, className)}
+        className={cn("field-input", "field-textarea", error && "field-input-invalid", className)}
         aria-invalid={Boolean(error)}
         required={required}
         {...props}
@@ -75,7 +74,7 @@ export function Select({ label, error, hint, required, id, className, children, 
     <FieldWrapper label={label} id={id} error={error} hint={hint} required={required}>
       <select
         id={id}
-        className={cn(styles.input, styles.select, error && styles.invalid, className)}
+        className={cn("field-input", "field-select", error && "field-input-invalid", className)}
         aria-invalid={Boolean(error)}
         required={required}
         {...props}

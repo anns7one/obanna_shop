@@ -10,7 +10,6 @@ import { useWishlistStore } from "@/store/wishlistStore";
 import { useAuthStore } from "@/store/authStore";
 import { useHasMounted } from "@/hooks/useHasMounted";
 import { cn } from "@/lib/utils";
-import styles from "./Header.module.css";
 
 const navLinks = [
   { href: "/catalog", label: "All" },
@@ -36,33 +35,33 @@ export function Header() {
 
   return (
     <>
-      <header className={styles.header}>
-        <div className={styles.bar}>
+      <header className="header">
+        <div className="header-bar">
           <button
             type="button"
-            className={styles.menuBtn}
+            className={cn("header-icon", "header-menu-btn")}
             onClick={() => setMenuOpen(true)}
             aria-label="Open menu"
           >
             <Menu size={20} aria-hidden />
           </button>
 
-          <Link href="/" className={styles.logo}>
+          <Link href="/" className="header-logo">
             Obanna
           </Link>
 
-          <nav className={styles.nav}>
+          <nav className="header-nav">
             {navLinks.map((link) => (
-              <Link key={link.href} href={link.href} className={styles.link}>
+              <Link key={link.href} href={link.href} className="header-link">
                 {link.label}
               </Link>
             ))}
           </nav>
 
-          <div className={styles.actions}>
+          <div className="header-actions">
             <button
               type="button"
-              className={styles.icon}
+              className="header-icon"
               onClick={() => setSearchOpen((v) => !v)}
               aria-label="Search"
               aria-expanded={searchOpen}
@@ -72,28 +71,36 @@ export function Header() {
 
             <Link
               href={user ? "/account" : "/login"}
-              className={styles.account}
+              className={cn("header-icon", "header-account")}
               aria-label={user ? "Account" : "Log in"}
             >
               <User size={20} aria-hidden />
             </Link>
 
-            <Link href="/wishlist" className={cn(styles.icon, styles.badge)} aria-label="Wishlist">
+            <Link
+              href="/wishlist"
+              className={cn("header-icon", "header-badge")}
+              aria-label={mounted && wishlistCount > 0 ? `Wishlist, ${wishlistCount} saved` : "Wishlist"}
+            >
               <Heart size={20} aria-hidden />
-              {mounted && wishlistCount > 0 && <span className={styles.count}>{wishlistCount}</span>}
+              {mounted && wishlistCount > 0 && <span className="header-count">{wishlistCount}</span>}
             </Link>
 
-            <Link href="/cart" className={cn(styles.icon, styles.badge)} aria-label="Cart">
+            <Link
+              href="/cart"
+              className={cn("header-icon", "header-badge")}
+              aria-label={mounted && cartCount > 0 ? `Cart, ${cartCount} item${cartCount === 1 ? "" : "s"}` : "Cart"}
+            >
               <ShoppingBag size={20} aria-hidden />
-              {mounted && cartCount > 0 && <span className={styles.count}>{cartCount}</span>}
+              {mounted && cartCount > 0 && <span className="header-count">{cartCount}</span>}
             </Link>
           </div>
         </div>
 
         {searchOpen && (
-          <div className={styles.search}>
-            <form onSubmit={handleSearchSubmit} className={styles.form}>
-              <label htmlFor="site-search" className={styles.srOnly}>
+          <div className="header-search">
+            <form onSubmit={handleSearchSubmit} className="header-form">
+              <label htmlFor="site-search" className="sr-only">
                 Search products
               </label>
               <input
@@ -103,9 +110,9 @@ export function Header() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search dresses, knitwear, accessories…"
-                className={styles.input}
+                className="header-input"
               />
-              <button type="submit" className={styles.submit}>
+              <button type="submit" className="header-submit">
                 Search
               </button>
             </form>
@@ -113,39 +120,39 @@ export function Header() {
         )}
       </header>
 
-      <div className={cn(styles.drawer, menuOpen ? styles.open : styles.closed)}>
+      <div className={cn("header-drawer", menuOpen ? "header-drawer-open" : "header-drawer-closed")}>
         <div
-          className={cn(styles.overlay, menuOpen && styles.open)}
+          className={cn("header-overlay", menuOpen && "header-overlay-open")}
           onClick={() => setMenuOpen(false)}
         />
-        <div className={cn(styles.panel, menuOpen && styles.open)}>
-          <div className={styles.head}>
-            <span className={styles.title}>Menu</span>
+        <div className={cn("header-panel", menuOpen && "header-panel-open")}>
+          <div className="header-head">
+            <span className="header-title">Menu</span>
             <button
               type="button"
-              className={styles.icon}
+              className="header-icon"
               onClick={() => setMenuOpen(false)}
               aria-label="Close menu"
             >
               <X size={20} aria-hidden />
             </button>
           </div>
-          <nav className={styles.list}>
+          <nav className="header-list">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
-                className={styles.item}
+                className="header-item"
               >
                 {link.label}
               </Link>
             ))}
-            <div className={styles.divider} />
+            <div className="header-divider" />
             <Link
               href={user ? "/account" : "/login"}
               onClick={() => setMenuOpen(false)}
-              className={styles.item}
+              className="header-item"
             >
               {user ? "My account" : "Log in"}
             </Link>

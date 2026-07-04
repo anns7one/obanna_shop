@@ -1,11 +1,10 @@
 import type { CategorySlug } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import styles from "./ProductImagePlaceholder.module.css";
 
 const tagClass: Record<CategorySlug, string> = {
-  women: styles.tagWomen,
-  men: styles.tagMen,
-  accessories: styles.tagAccessories,
+  women: "placeholder-tag-women",
+  men: "placeholder-tag-men",
+  accessories: "placeholder-tag-accessories",
 };
 
 /**
@@ -26,9 +25,9 @@ export function ProductImagePlaceholder({
   className?: string;
 }) {
   return (
-    <div className={cn(styles.placeholder, styles[category], compact && styles.compact, className)}>
-      {!compact && <div className={cn(styles.tag, tagClass[category])}>{category}</div>}
-      <span className={styles.title}>{title}</span>
+    <div className={cn("placeholder", `placeholder-${category}`, compact && "placeholder-compact", className)}>
+      {!compact && <div className={cn("placeholder-tag", tagClass[category])}>{category}</div>}
+      <span className="placeholder-title">{title}</span>
     </div>
   );
 }

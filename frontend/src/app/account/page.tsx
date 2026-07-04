@@ -3,7 +3,6 @@
 import { AuthGuard } from "@/components/auth/AuthGuard";
 import { useAuthStore } from "@/store/authStore";
 import { Button } from "@/components/ui/Button";
-import styles from "./page.module.css";
 
 export default function AccountPage() {
   return (
@@ -20,15 +19,15 @@ function AccountContent() {
   if (!user) return null;
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>Hi, {user.firstName}</h1>
-      <p className={styles.email}>{user.email}</p>
+    <div className="account-page">
+      <h1 className="account-page-title">Hi, {user.firstName}</h1>
+      <p className="account-page-email">{user.email}</p>
 
-      <div className={styles.grid}>
-        <Button href="/account/orders" variant="secondary" size="lg" className={styles.link}>
+      <div className="account-page-grid">
+        <Button href="/account/orders" variant="secondary" size="lg" className="account-page-link">
           Order history
         </Button>
-        <Button href="/wishlist" variant="secondary" size="lg" className={styles.link}>
+        <Button href="/wishlist" variant="secondary" size="lg" className="account-page-link">
           Wishlist
         </Button>
       </div>
@@ -36,7 +35,7 @@ function AccountContent() {
       <Button
         variant="ghost"
         size="sm"
-        className={styles.logout}
+        className="account-page-logout"
         onClick={() => {
           logout();
           // Hard navigation: avoids racing AuthGuard's own redirect effect,

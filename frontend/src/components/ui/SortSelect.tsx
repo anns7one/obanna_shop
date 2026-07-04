@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { ArrowUpDown, Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import styles from "./SortSelect.module.css";
 
 interface SortSelectProps<T extends string> {
   value: T;
@@ -20,6 +19,7 @@ interface SortSelectProps<T extends string> {
 export function SortSelect<T extends string>({ value, options, onChange }: SortSelectProps<T>) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const menuId = useId();
 
   useEffect(() => {
     if (!open) return;
@@ -44,21 +44,22 @@ export function SortSelect<T extends string>({ value, options, onChange }: SortS
   const current = options.find((o) => o.value === value) ?? options[0];
 
   return (
-    <div ref={containerRef} className={styles.container}>
+    <div ref={containerRef} className="sort-select">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className={styles.btn}
+        aria-controls={menuId}
+        className="sort-select-btn"
       >
-        <ArrowUpDown size={16} className={styles.icon} aria-hidden />
-        <span className={styles.label}>{current.label}</span>
-        <ChevronDown size={16} className={cn(styles.chevron, open && styles.open)} aria-hidden />
+        <ArrowUpDown size={16} className="sort-select-icon" aria-hidden />
+        <span className="sort-select-label">{current.label}</span>
+        <ChevronDown size={16} className={cn("sort-select-chevron", open && "sort-select-chevron-open")} aria-hidden />
       </button>
 
       {open && (
-        <ul role="listbox" className={styles.menu}>
+        <ul id={menuId} role="listbox" className="sort-select-menu">
           {options.map((option) => (
             <li key={option.value}>
               <button
@@ -69,10 +70,10 @@ export function SortSelect<T extends string>({ value, options, onChange }: SortS
                   onChange(option.value);
                   setOpen(false);
                 }}
-                className={cn(styles.option, option.value === value && styles.selected)}
+                className={cn("sort-select-option", option.value === value && "sort-select-option-selected")}
               >
                 {option.label}
-                {option.value === value && <Check size={16} className={styles.check} aria-hidden />}
+                {option.value === value && <Check size={16} className="sort-select-check" aria-hidden />}
               </button>
             </li>
           ))}

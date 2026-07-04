@@ -4,18 +4,17 @@ import { CategoryTile } from "@/components/home/CategoryTile";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { NewsletterForm } from "@/components/home/NewsletterForm";
 import { Button } from "@/components/ui/Button";
-import styles from "./page.module.css";
 
 export default async function HomePage() {
   const newArrivals = (await fetchProducts({ sort: "newest" })).slice(0, 4);
 
   return (
     <div>
-      <section className={styles.hero}>
-        <div className={styles.inner}>
-          <span className={styles.badge}>New season</span>
-          <h1 className={styles.title}>Soft-spoken essentials for everyday wear</h1>
-          <p className={styles.subtitle}>
+      <section className="home-hero">
+        <div className="home-inner">
+          <span className="home-badge">New season</span>
+          <h1 className="home-title">Soft-spoken essentials for everyday wear</h1>
+          <p className="home-subtitle">
             A quiet, considered showroom of women&apos;s, men&apos;s and accessory pieces — made to feel
             like the calmest part of your day.
           </p>
@@ -25,18 +24,18 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className={styles.section}>
-        <h2 className={styles.heading}>Shop by category</h2>
-        <div className={styles.grid}>
+      <section className="home-section">
+        <h2 className="home-heading">Shop by category</h2>
+        <div className="home-grid">
           {categories.map((category) => (
             <CategoryTile key={category.slug} category={category} />
           ))}
         </div>
       </section>
 
-      <section className={styles.section}>
-        <div className={styles.head}>
-          <h2 className={styles.heading}>New arrivals</h2>
+      <section className="home-section">
+        <div className="home-head">
+          <h2 className="home-heading">New arrivals</h2>
           <Button href="/catalog?sort=newest" variant="ghost" size="sm">
             View all
           </Button>
@@ -44,10 +43,10 @@ export default async function HomePage() {
         <ProductGrid products={newArrivals} />
       </section>
 
-      <section className={styles.section}>
-        <div className={styles.newsletter}>
-          <h2 className={styles.heading}>Stay in the loop</h2>
-          <p className={styles.copy}>Occasional notes on new arrivals and restocks — nothing more.</p>
+      <section className="home-section">
+        <div className="home-newsletter">
+          <h2 className="home-heading">Stay in the loop</h2>
+          <p className="home-copy">Occasional notes on new arrivals and restocks — nothing more.</p>
           <NewsletterForm />
         </div>
       </section>

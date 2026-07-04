@@ -5,7 +5,6 @@ import { CheckoutForm } from "@/components/checkout/CheckoutForm";
 import { useCartStore } from "@/store/cartStore";
 import { useHasMounted } from "@/hooks/useHasMounted";
 import { Button } from "@/components/ui/Button";
-import styles from "./page.module.css";
 
 export default function CheckoutPage() {
   return (
@@ -20,15 +19,15 @@ function CheckoutPageContent() {
   const items = useCartStore((s) => s.items);
 
   if (!mounted) {
-    return <div className={styles.container} />;
+    return <div className="checkout-page" />;
   }
 
   if (items.length === 0) {
     return (
-      <div className={styles.empty}>
-        <h1 className={styles.emptyTitle}>Nothing to check out yet</h1>
-        <p className={styles.emptyHint}>Add a few pieces to your cart first.</p>
-        <Button href="/catalog" size="lg" className={styles.emptyCta}>
+      <div className="page-empty">
+        <h1 className="page-empty-title">Nothing to check out yet</h1>
+        <p className="page-empty-hint">Add a few pieces to your cart first.</p>
+        <Button href="/catalog" size="lg" className="page-empty-cta">
           Continue shopping
         </Button>
       </div>
@@ -36,9 +35,9 @@ function CheckoutPageContent() {
   }
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>Checkout</h1>
-      <div className={styles.form}>
+    <div className="checkout-page">
+      <h1 className="checkout-page-title">Checkout</h1>
+      <div className="checkout-page-form">
         <CheckoutForm />
       </div>
     </div>

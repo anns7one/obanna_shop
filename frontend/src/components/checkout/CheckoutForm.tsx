@@ -11,7 +11,6 @@ import { useCartStore, selectCartTotal } from "@/store/cartStore";
 import { Input } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
 import { formatPrice } from "@/lib/utils";
-import styles from "./CheckoutForm.module.css";
 
 export function CheckoutForm() {
   const router = useRouter();
@@ -53,25 +52,25 @@ export function CheckoutForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className={styles.container}>
-      <div className={styles.fields}>
-        <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>Shipping details</legend>
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="checkout-form">
+      <div className="checkout-form-fields">
+        <fieldset className="checkout-form-fieldset">
+          <legend className="checkout-form-legend">Shipping details</legend>
           <Input id="fullName" label="Full name" autoComplete="name" error={errors.fullName?.message} {...register("fullName")} />
           <Input id="address" label="Address" autoComplete="street-address" error={errors.address?.message} {...register("address")} />
-          <div className={styles.row}>
+          <div className="checkout-form-row">
             <Input id="city" label="City" autoComplete="address-level2" error={errors.city?.message} {...register("city")} />
             <Input id="postalCode" label="Postal code" autoComplete="postal-code" error={errors.postalCode?.message} {...register("postalCode")} />
           </div>
-          <div className={styles.row}>
+          <div className="checkout-form-row">
             <Input id="country" label="Country" autoComplete="country-name" error={errors.country?.message} {...register("country")} />
             <Input id="phone" label="Phone" type="tel" autoComplete="tel" error={errors.phone?.message} {...register("phone")} />
           </div>
         </fieldset>
 
-        <fieldset className={styles.fieldset}>
-          <legend className={styles.legend}>Payment</legend>
-          <p className={styles.hint}>
+        <fieldset className="checkout-form-fieldset">
+          <legend className="checkout-form-legend">Payment</legend>
+          <p className="checkout-form-hint">
             Demo checkout — no real payment is processed and card details are not transmitted.
           </p>
           <Input id="cardName" label="Name on card" autoComplete="cc-name" error={errors.cardName?.message} {...register("cardName")} />
@@ -84,32 +83,32 @@ export function CheckoutForm() {
             error={errors.cardNumber?.message}
             {...register("cardNumber")}
           />
-          <div className={styles.row}>
+          <div className="checkout-form-row">
             <Input id="expiry" label="Expiry (MM/YY)" autoComplete="cc-exp" placeholder="MM/YY" error={errors.expiry?.message} {...register("expiry")} />
             <Input id="cvc" label="CVC" inputMode="numeric" autoComplete="cc-csc" error={errors.cvc?.message} {...register("cvc")} />
           </div>
         </fieldset>
 
         {formError && (
-          <p role="alert" className={styles.error}>
+          <p role="alert" className="checkout-form-error">
             {formError}
           </p>
         )}
       </div>
 
-      <div className={styles.summary}>
-        <h2 className={styles.title}>Order summary</h2>
-        <ul className={styles.items}>
+      <div className="checkout-form-summary">
+        <h2 className="checkout-form-title">Order summary</h2>
+        <ul className="checkout-form-items">
           {items.map((item) => (
-            <li key={`${item.productId}-${item.size}-${item.color}`} className={styles.item}>
+            <li key={`${item.productId}-${item.size}-${item.color}`} className="checkout-form-item">
               <span>
                 {item.title} × {item.quantity}
               </span>
-              <span className={styles.price}>{formatPrice(item.price * item.quantity)}</span>
+              <span className="checkout-form-price">{formatPrice(item.price * item.quantity)}</span>
             </li>
           ))}
         </ul>
-        <div className={styles.total}>
+        <div className="checkout-form-total">
           <span>Total</span>
           <span>{formatPrice(total)}</span>
         </div>
@@ -117,7 +116,7 @@ export function CheckoutForm() {
           type="submit"
           size="lg"
           fullWidth
-          className={styles.submit}
+          className="checkout-form-submit"
           disabled={isSubmitting || items.length === 0}
         >
           {isSubmitting ? "Placing order…" : "Place order"}

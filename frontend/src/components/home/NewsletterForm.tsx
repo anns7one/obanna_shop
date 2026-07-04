@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
-import styles from "./NewsletterForm.module.css";
 
 export function NewsletterForm() {
   const [submitted, setSubmitted] = useState(false);
 
   if (submitted) {
-    return <p className={styles.confirm}>You&apos;re on the list — thank you.</p>;
+    return <p className="newsletter-confirm">You&apos;re on the list — thank you.</p>;
   }
 
   return (
@@ -17,9 +16,9 @@ export function NewsletterForm() {
         e.preventDefault();
         setSubmitted(true);
       }}
-      className={styles.form}
+      className="newsletter-form"
     >
-      <label htmlFor="newsletter-email" className={styles.srOnly}>
+      <label htmlFor="newsletter-email" className="sr-only">
         Email address
       </label>
       <input
@@ -27,9 +26,9 @@ export function NewsletterForm() {
         type="email"
         required
         placeholder="you@example.com"
-        className={styles.input}
+        className="newsletter-input"
       />
-      <Button type="submit" size="md" className={styles.submit}>
+      <Button type="submit" size="md" className="newsletter-submit">
         Subscribe
       </Button>
     </form>

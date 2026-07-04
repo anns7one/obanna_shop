@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { useHasMounted } from "@/hooks/useHasMounted";
-import styles from "./AuthGuard.module.css";
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const mounted = useHasMounted();
@@ -19,7 +18,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   }, [mounted, user, pathname, router]);
 
   if (!mounted || !user) {
-    return <div className={styles.loading}>Loading…</div>;
+    return <div className="auth-loading">Loading…</div>;
   }
 
   return <>{children}</>;

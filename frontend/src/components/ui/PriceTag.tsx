@@ -1,5 +1,4 @@
 import { cn, formatPrice } from "@/lib/utils";
-import styles from "./PriceTag.module.css";
 
 export function PriceTag({
   price,
@@ -11,10 +10,10 @@ export function PriceTag({
   size?: "sm" | "md" | "lg";
 }) {
   return (
-    <div className={styles.container}>
-      <span className={cn(styles.value, styles[size])}>{formatPrice(price)}</span>
+    <div className="price-tag">
+      <span className={cn("price-tag-value", `price-tag-${size}`)}>{formatPrice(price)}</span>
       {compareAtPrice && compareAtPrice > price && (
-        <span className={styles.compare}>{formatPrice(compareAtPrice)}</span>
+        <span className="price-tag-compare">{formatPrice(compareAtPrice)}</span>
       )}
     </div>
   );

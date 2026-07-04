@@ -10,7 +10,6 @@ import { registerUser, AuthError } from "@/lib/api/auth";
 import { useAuthStore } from "@/store/authStore";
 import { Input } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
-import styles from "./AuthForm.module.css";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -36,8 +35,8 @@ export function RegisterForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className={styles.form}>
-      <div className={styles.row}>
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="auth-form">
+      <div className="auth-form-row">
         <Input
           id="firstName"
           label="First name"
@@ -80,7 +79,7 @@ export function RegisterForm() {
       />
 
       {formError && (
-        <p role="alert" className={styles.error}>
+        <p role="alert" className="auth-form-error">
           {formError}
         </p>
       )}
@@ -89,9 +88,9 @@ export function RegisterForm() {
         {isSubmitting ? "Creating account…" : "Create account"}
       </Button>
 
-      <p className={styles.footer}>
+      <p className="auth-form-footer">
         Already have an account?{" "}
-        <Link href="/login" className={styles.link}>
+        <Link href="/login" className="auth-form-link">
           Sign in
         </Link>
       </p>

@@ -7,8 +7,8 @@ import type { CategorySlug, SortOption } from "@/lib/types";
 import { useProducts } from "@/hooks/useProducts";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { SortSelect } from "@/components/ui/SortSelect";
+import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
-import styles from "./CatalogView.module.css";
 
 const sortLabels: Record<SortOption, string> = {
   newest: "Newest",
@@ -17,9 +17,15 @@ const sortLabels: Record<SortOption, string> = {
 };
 
 const toneClass: Record<CategorySlug, string> = {
-  women: styles.women,
-  men: styles.men,
-  accessories: styles.accessories,
+  women: "catalog-pill-women",
+  men: "catalog-pill-men",
+  accessories: "catalog-pill-accessories",
+};
+
+const chipToneClass: Record<CategorySlug, string> = {
+  women: "catalog-chip-women",
+  men: "catalog-chip-men",
+  accessories: "catalog-chip-accessories",
 };
 
 export function CatalogView() {
@@ -32,7 +38,13 @@ export function CatalogView() {
 
   const activeCategory = categoryParam && getCategory(categoryParam) ? categoryParam : undefined;
 
-  const { data: products, isLoading } = useProducts({
+  const {
+    data: products,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useProducts({
     category: activeCategory,
     sort: sortParam,
     q,
@@ -51,20 +63,21 @@ export function CatalogView() {
   const hasActiveFilters = Boolean(activeCategory || q);
 
   return (
-    <div className={styles.container}>
-      <div className={styles.heading}>
-        <h1 className={styles.title}>{categoryInfo ? categoryInfo.name : "All pieces"}</h1>
-        <p className={styles.desc}>
+    <div className="catalog">
+      <div className="catalog-heading">
+        <h1 className="catalog-title">{categoryInfo ? categoryInfo.name : "All pieces"}</h1>
+        <p className="catalog-desc">
           {categoryInfo ? categoryInfo.description : "Everything from the current collection, in one place."}
         </p>
       </div>
 
-      <div className={styles.toolbar}>
-        <div className={styles.row}>
+      <div className="catalog-toolbar">
+        <div className="catalog-row">
           <button
             type="button"
             onClick={() => updateParams({ category: undefined })}
-            className={cn(styles.pill, !activeCategory && styles.selected)}
+            aria-pressed={!activeCategory}
+            className={cn("catalog-pill", !activeCategory && "catalog-pill-selected")}
           >
             All
           </button>
@@ -73,16 +86,17 @@ export function CatalogView() {
               key={c.slug}
               type="button"
               onClick={() => updateParams({ category: c.slug })}
-              className={cn(styles.pill, toneClass[c.slug], activeCategory === c.slug && styles.selected)}
+              aria-pressed={activeCategory === c.slug}
+              className={cn("catalog-pill", toneClass[c.slug], activeCategory === c.slug && "catalog-pill-selected")}
             >
               {c.name}
             </button>
           ))}
         </div>
 
-        <div className={styles.sort}>
+        <div className="catalog-sort">
           {!isLoading && (
-            <span className={styles.count}>
+            <span className="catalog-count">
               {products?.length ?? 0} piece{products?.length === 1 ? "" : "s"}
             </span>
           )}
@@ -99,14 +113,14 @@ export function CatalogView() {
       </div>
 
       {hasActiveFilters && (
-        <div className={styles.filters}>
-          <span className={styles.label}>Filtering by:</span>
+        <div className="catalog-filters">
+          <span className="catalog-label">Filtering by:</span>
 
           {categoryInfo && (
             <button
               type="button"
               onClick={() => updateParams({ category: undefined })}
-              className={cn(styles.chip, toneClass[categoryInfo.slug])}
+              className={cn("catalog-chip", chipToneClass[categoryInfo.slug])}
             >
               {categoryInfo.name}
               <X size={12} aria-hidden />
@@ -114,7 +128,7 @@ export function CatalogView() {
           )}
 
           {q && (
-            <button type="button" onClick={() => updateParams({ q: undefined })} className={styles.chip}>
+            <button type="button" onClick={() => updateParams({ q: undefined })} className="catalog-chip">
               &ldquo;{q}&rdquo;
               <X size={12} aria-hidden />
             </button>
@@ -124,7 +138,7 @@ export function CatalogView() {
             <button
               type="button"
               onClick={() => updateParams({ category: undefined, q: undefined })}
-              className={styles.clear}
+              className="catalog-clear"
             >
               Clear all
             </button>
@@ -132,19 +146,28 @@ export function CatalogView() {
         </div>
       )}
 
-      {isLoading ? (
-        <div className={styles.loading}>
+      {isError && (
+        <div className="data-error" role="alert">
+          <p>{error instanceof Error ? error.message : "We couldn't load these pieces."}</p>
+          <Button variant="secondary" size="sm" onClick={() => refetch()}>
+            Try again
+          </Button>
+        </div>
+      )}
+
+      {isLoading && (
+        <div className="catalog-loading">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className={styles.loadingCard}>
-              <div className={styles.loadingImg} />
-              <div className={styles.loadingLine} />
-              <div className={cn(styles.loadingLine, styles.short)} />
+            <div key={i} className="catalog-loading-card">
+              <div className="catalog-loading-img" />
+              <div className="catalog-loading-line" />
+              <div className={cn("catalog-loading-line", "catalog-loading-line-short")} />
             </div>
           ))}
         </div>
-      ) : (
-        <ProductGrid products={products ?? []} />
       )}
+
+      {!isLoading && !isError && <ProductGrid products={products ?? []} />}
     </div>
   );
 }

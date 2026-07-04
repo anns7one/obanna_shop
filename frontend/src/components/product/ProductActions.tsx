@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Heart } from "lucide-react";
 import type { Product } from "@/lib/types";
 import { Button } from "@/components/ui/Button";
@@ -9,7 +9,6 @@ import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
 import { useHasMounted } from "@/hooks/useHasMounted";
 import { cn } from "@/lib/utils";
-import styles from "./ProductActions.module.css";
 
 export function ProductActions({ product }: { product: Product }) {
   const [size, setSize] = useState(product.sizes[0]);
@@ -23,6 +22,13 @@ export function ProductActions({ product }: { product: Product }) {
   const toggleWishlist = useWishlistStore((s) => s.toggle);
 
   const outOfStock = product.stock <= 0;
+  const addedTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (addedTimeoutRef.current) window.clearTimeout(addedTimeoutRef.current);
+    };
+  }, []);
 
   function handleAddToCart() {
     if (outOfStock) return;
@@ -38,23 +44,24 @@ export function ProductActions({ product }: { product: Product }) {
       stock: product.stock,
     });
     setJustAdded(true);
-    window.setTimeout(() => setJustAdded(false), 2500);
+    if (addedTimeoutRef.current) window.clearTimeout(addedTimeoutRef.current);
+    addedTimeoutRef.current = window.setTimeout(() => setJustAdded(false), 2500);
   }
 
   return (
-    <div className={styles.container}>
+    <div className="product-actions">
       <div>
-        <span className={styles.label}>
-          Color — <span className={styles.value}>{color}</span>
+        <span className="product-actions-label">
+          Color — <span className="product-actions-value">{color}</span>
         </span>
-        <div className={styles.row}>
+        <div className="product-actions-row">
           {product.colors.map((c) => (
             <button
               key={c}
               type="button"
               onClick={() => setColor(c)}
               aria-pressed={color === c}
-              className={cn(styles.pill, color === c && styles.selected)}
+              className={cn("product-actions-pill", color === c && "product-actions-pill-selected")}
             >
               {c}
             </button>
@@ -63,15 +70,15 @@ export function ProductActions({ product }: { product: Product }) {
       </div>
 
       <div>
-        <span className={styles.label}>Size</span>
-        <div className={styles.row}>
+        <span className="product-actions-label">Size</span>
+        <div className="product-actions-row">
           {product.sizes.map((s) => (
             <button
               key={s}
               type="button"
               onClick={() => setSize(s)}
               aria-pressed={size === s}
-              className={cn(styles.pill, size === s && styles.selected)}
+              className={cn("product-actions-pill", size === s && "product-actions-pill-selected")}
             >
               {s}
             </button>
@@ -80,7 +87,7 @@ export function ProductActions({ product }: { product: Product }) {
       </div>
 
       <div>
-        <span className={styles.label}>Quantity</span>
+        <span className="product-actions-label">Quantity</span>
         <QuantityStepper
           quantity={quantity}
           max={Math.max(product.stock, 1)}
@@ -89,7 +96,7 @@ export function ProductActions({ product }: { product: Product }) {
         />
       </div>
 
-      <div className={styles.actions}>
+      <div className="product-actions-controls">
         <Button onClick={handleAddToCart} disabled={outOfStock} size="lg" fullWidth>
           {outOfStock ? "Out of stock" : "Add to cart"}
         </Button>
@@ -98,13 +105,13 @@ export function ProductActions({ product }: { product: Product }) {
           onClick={() => toggleWishlist(product.id)}
           aria-pressed={mounted && isWishlisted}
           aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-          className={styles.fav}
+          className="product-actions-fav"
         >
-          <Heart size={20} className={cn(mounted && isWishlisted && styles.active)} aria-hidden />
+          <Heart size={20} className={cn(mounted && isWishlisted && "product-actions-fav-active")} aria-hidden />
         </button>
       </div>
 
-      <p role="status" aria-live="polite" className={cn(styles.status, !justAdded && styles.srOnly)}>
+      <p role="status" aria-live="polite" className={cn("product-actions-status", !justAdded && "sr-only")}>
         {justAdded ? "Added to your cart." : ""}
       </p>
     </div>

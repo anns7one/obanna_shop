@@ -8,7 +8,6 @@ import { QuantityStepper } from "@/components/ui/QuantityStepper";
 import { Button } from "@/components/ui/Button";
 import { formatPrice } from "@/lib/utils";
 import { useHasMounted } from "@/hooks/useHasMounted";
-import styles from "./page.module.css";
 
 export default function CartPage() {
   const mounted = useHasMounted();
@@ -18,15 +17,15 @@ export default function CartPage() {
   const removeItem = useCartStore((s) => s.removeItem);
 
   if (!mounted) {
-    return <div className={styles.container} />;
+    return <div className="cart-page" />;
   }
 
   if (items.length === 0) {
     return (
-      <div className={styles.empty}>
-        <h1 className={styles.emptyTitle}>Your cart is empty</h1>
-        <p className={styles.emptyHint}>Pieces you add will show up here.</p>
-        <Button href="/catalog" size="lg" className={styles.emptyCta}>
+      <div className="page-empty">
+        <h1 className="page-empty-title">Your cart is empty</h1>
+        <p className="page-empty-hint">Pieces you add will show up here.</p>
+        <Button href="/catalog" size="lg" className="page-empty-cta">
           Continue shopping
         </Button>
       </div>
@@ -34,29 +33,29 @@ export default function CartPage() {
   }
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>Your cart</h1>
+    <div className="cart-page">
+      <h1 className="cart-page-title">Your cart</h1>
 
-      <div className={styles.layout}>
-        <ul className={styles.list}>
+      <div className="cart-page-layout">
+        <ul className="cart-page-list">
           {items.map((item) => (
-            <li key={`${item.productId}-${item.size}-${item.color}`} className={styles.item}>
-              <Link href={`/product/${item.slug}`} className={styles.thumb}>
+            <li key={`${item.productId}-${item.size}-${item.color}`} className="cart-page-item">
+              <Link href={`/product/${item.slug}`} className="cart-page-thumb">
                 <ProductImagePlaceholder
                   title={item.title}
                   category={item.category}
                   compact
-                  className={styles.img}
+                  className="cart-page-img"
                 />
               </Link>
 
-              <div className={styles.body}>
-                <div className={styles.top}>
+              <div className="cart-page-body">
+                <div className="cart-page-top">
                   <div>
-                    <Link href={`/product/${item.slug}`} className={styles.name}>
+                    <Link href={`/product/${item.slug}`} className="cart-page-name">
                       {item.title}
                     </Link>
-                    <p className={styles.meta}>
+                    <p className="cart-page-meta">
                       {item.color} · Size {item.size}
                     </p>
                   </div>
@@ -64,43 +63,43 @@ export default function CartPage() {
                     type="button"
                     onClick={() => removeItem(item.productId, item.size, item.color)}
                     aria-label={`Remove ${item.title} from cart`}
-                    className={styles.remove}
+                    className="cart-page-remove"
                   >
                     <Trash2 size={16} aria-hidden />
                   </button>
                 </div>
 
-                <div className={styles.bottom}>
+                <div className="cart-page-bottom">
                   <QuantityStepper
                     quantity={item.quantity}
                     max={item.stock}
                     onChange={(next) => updateQuantity(item.productId, item.size, item.color, next)}
                     label={item.title}
                   />
-                  <span className={styles.price}>{formatPrice(item.price * item.quantity)}</span>
+                  <span className="cart-page-price">{formatPrice(item.price * item.quantity)}</span>
                 </div>
               </div>
             </li>
           ))}
         </ul>
 
-        <div className={styles.summary}>
-          <h2 className={styles.heading}>Order summary</h2>
-          <dl className={styles.rows}>
-            <div className={styles.row}>
+        <div className="cart-page-summary">
+          <h2 className="cart-page-heading">Order summary</h2>
+          <dl className="cart-page-rows">
+            <div className="cart-page-row">
               <dt>Subtotal</dt>
-              <dd className={styles.value}>{formatPrice(total)}</dd>
+              <dd className="cart-page-value">{formatPrice(total)}</dd>
             </div>
-            <div className={styles.row}>
+            <div className="cart-page-row">
               <dt>Shipping</dt>
-              <dd className={styles.muted}>Calculated at checkout</dd>
+              <dd className="cart-page-muted">Calculated at checkout</dd>
             </div>
           </dl>
-          <div className={styles.total}>
+          <div className="cart-page-total">
             <span>Total</span>
             <span>{formatPrice(total)}</span>
           </div>
-          <Button href="/checkout" size="lg" fullWidth className={styles.submit}>
+          <Button href="/checkout" size="lg" fullWidth className="cart-page-submit">
             Checkout
           </Button>
         </div>
