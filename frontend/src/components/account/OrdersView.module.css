@@ -1,0 +1,120 @@
+.container {
+  margin: 0 auto;
+  max-width: 56rem;
+  padding: 2.5rem 1rem;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 2.5rem 2rem;
+  }
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.875rem;
+  color: var(--color-ink-900);
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 2.25rem;
+  }
+}
+
+.success {
+  margin-top: 1.5rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-blush-50);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-blush-700);
+}
+
+.list {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.loading {
+  font-size: 0.875rem;
+  color: var(--color-ink-500);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  border-radius: var(--radius-lg);
+  border: 1px dashed var(--color-ink-300);
+  padding: 5rem 0;
+  text-align: center;
+}
+
+.emptyTitle {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  color: var(--color-ink-700);
+}
+
+.order {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-ink-200);
+  background: var(--color-white);
+  padding: 1.5rem;
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.id {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-ink-900);
+}
+
+.date {
+  font-size: 0.75rem;
+  color: var(--color-ink-500);
+}
+
+.items {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-top: 1px solid var(--color-ink-200);
+  padding-top: 1rem;
+  font-size: 0.875rem;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  color: var(--color-ink-700);
+}
+
+.price {
+  font-weight: 500;
+  color: var(--color-ink-900);
+}
+
+.total {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--color-ink-200);
+  padding-top: 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-ink-900);
+}

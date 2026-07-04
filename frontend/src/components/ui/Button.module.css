@@ -1,0 +1,87 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+  cursor: pointer;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-ink-900);
+  outline-offset: 2px;
+}
+
+.full {
+  width: 100%;
+}
+
+/* Variants */
+
+.primary {
+  background: var(--color-ink-900);
+  color: var(--color-white);
+  border: 1px solid var(--color-ink-900);
+}
+.primary:hover {
+  background: var(--color-blush-700);
+  border-color: var(--color-blush-700);
+}
+
+.secondary {
+  background: var(--color-white);
+  color: var(--color-ink-900);
+  border: 1px solid var(--color-ink-300);
+}
+.secondary:hover {
+  border-color: var(--color-blush-500);
+  color: var(--color-blush-700);
+}
+
+.ghost {
+  background: transparent;
+  color: var(--color-ink-900);
+  border: 1px solid transparent;
+}
+.ghost:hover {
+  background: var(--color-ink-100);
+}
+
+.danger {
+  background: var(--color-white);
+  color: var(--color-blush-700);
+  border: 1px solid var(--color-blush-200);
+}
+.danger:hover {
+  background: var(--color-blush-50);
+}
+.danger:focus-visible {
+  outline-color: var(--color-blush-700);
+}
+
+/* Sizes */
+
+.sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  border-radius: var(--radius-sm);
+}
+
+.md {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  border-radius: var(--radius-md);
+}
+
+.lg {
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  border-radius: var(--radius-md);
+}

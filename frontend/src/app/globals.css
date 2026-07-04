@@ -1,0 +1,139 @@
+/* ---------- Design tokens ---------- */
+:root {
+  --color-background: #fffdfb;
+  --color-foreground: #2d2a32;
+
+  /* Soft feminine palette — pastel washes for surfaces, deep neutrals for text/contrast */
+  --color-blush-50: #fdf3f7;
+  --color-blush-100: #f7c6d9;
+  --color-blush-200: #f2a9c4;
+  --color-blush-500: #d9678f;
+  --color-blush-600: #c24b78;
+  --color-blush-700: #9f3a63;
+
+  --color-sky-50: #eff8ff;
+  --color-sky-100: #a7d8ff;
+  --color-sky-200: #8bc8f7;
+  --color-sky-600: #3b7fb8;
+
+  --color-butter-50: #fffbea;
+  --color-butter-100: #fff1b8;
+  --color-butter-200: #ffe38a;
+  --color-butter-600: #b8860f;
+
+  --color-ink-900: #2d2a32;
+  --color-ink-700: #4a4450;
+  --color-ink-500: #746c7a;
+  --color-ink-300: #cfc7d4;
+  --color-ink-200: #e4dee8;
+  --color-ink-100: #f2eef5;
+
+  --color-cream: #fffdfb;
+  --color-white: #ffffff;
+
+  --font-body: var(--font-body), Arial, Helvetica, sans-serif;
+  --font-display: var(--font-display), Georgia, serif;
+
+  --radius-sm: 0.75rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.25rem;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 1px 2px rgba(45, 42, 50, 0.04);
+  --shadow-md: 0 10px 30px rgba(45, 42, 50, 0.08);
+  --shadow-lg: 0 20px 45px rgba(45, 42, 50, 0.12);
+
+  --container-max: 80rem;
+
+  /* Match the breakpoints used throughout the component stylesheets */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+}
+
+/* ---------- Minimal reset (standing in for Tailwind's preflight) ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  background: var(--color-cream);
+  color: var(--color-ink-900);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+::selection {
+  background: var(--color-blush-100);
+  color: var(--color-ink-900);
+}
+
+* {
+  scrollbar-color: var(--color-blush-200) var(--color-ink-100);
+}

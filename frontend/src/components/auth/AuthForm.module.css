@@ -1,0 +1,35 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.error {
+  border-radius: var(--radius-sm);
+  background: var(--color-blush-50);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-blush-700);
+}
+
+.footer {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--color-ink-500);
+}
+
+.link {
+  font-weight: 500;
+  color: var(--color-blush-700);
+}
+
+.link:hover {
+  text-decoration: underline;
+}

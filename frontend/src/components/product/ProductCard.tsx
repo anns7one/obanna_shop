@@ -1,0 +1,49 @@
+"use client";
+
+import Link from "next/link";
+import { Heart } from "lucide-react";
+import type { Product } from "@/lib/types";
+import { ProductImagePlaceholder } from "@/components/ui/ProductImagePlaceholder";
+import { PriceTag } from "@/components/ui/PriceTag";
+import { Badge } from "@/components/ui/Badge";
+import { useWishlistStore } from "@/store/wishlistStore";
+import { useHasMounted } from "@/hooks/useHasMounted";
+import { cn } from "@/lib/utils";
+import styles from "./ProductCard.module.css";
+
+export function ProductCard({ product }: { product: Product }) {
+  const mounted = useHasMounted();
+  const isWishlisted = useWishlistStore((s) => s.productIds.includes(product.id));
+  const toggleWishlist = useWishlistStore((s) => s.toggle);
+
+  const onSale = Boolean(product.compareAtPrice && product.compareAtPrice > product.price);
+
+  return (
+    <div className={styles.card}>
+      <Link href={`/product/${product.slug}`} className={styles.link}>
+        <div className={styles.frame}>
+          <ProductImagePlaceholder title={product.title} category={product.category} className={styles.image} />
+          <div className={styles.badges}>
+            {product.isNew && <Badge tone="sky">New</Badge>}
+            {onSale && <Badge tone="blush">Sale</Badge>}
+          </div>
+        </div>
+      </Link>
+
+      <button
+        type="button"
+        onClick={() => toggleWishlist(product.id)}
+        aria-pressed={mounted && isWishlisted}
+        aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+        className={styles.fav}
+      >
+        <Heart size={16} className={cn(mounted && isWishlisted && styles.active)} aria-hidden />
+      </button>
+
+      <Link href={`/product/${product.slug}`} className={styles.info}>
+        <span className={styles.title}>{product.title}</span>
+        <PriceTag price={product.price} compareAtPrice={product.compareAtPrice} size="sm" />
+      </Link>
+    </div>
+  );
+}

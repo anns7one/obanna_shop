@@ -1,0 +1,8 @@
+.loading {
+  margin: 0 auto;
+  max-width: 64rem;
+  padding: 6rem 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--color-ink-500);
+}
