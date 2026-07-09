@@ -2,6 +2,7 @@
 
 import { AuthGuard } from "@/components/auth/AuthGuard";
 import { useAuthStore } from "@/store/authStore";
+import { logoutUser } from "@/lib/api/auth";
 import { Button } from "@/components/ui/Button";
 
 export default function AccountPage() {
@@ -37,10 +38,14 @@ function AccountContent() {
         size="sm"
         className="account-page-logout"
         onClick={() => {
-          logout();
-          // Hard navigation: avoids racing AuthGuard's own redirect effect,
-          // which fires the instant `user` goes null on this guarded page.
-          window.location.assign("/");
+          // Revoke the server-side refresh session first (best-effort),
+          // then clear local state and hard-navigate: avoids racing
+          // AuthGuard's own redirect effect, which fires the instant
+          // `user` goes null on this guarded page.
+          logoutUser().finally(() => {
+            logout();
+            window.location.assign("/");
+          });
         }}
       >
         Log out

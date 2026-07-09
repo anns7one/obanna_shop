@@ -1,0 +1,17 @@
+[
+  {
+    "slug": "women",
+    "name": "Women",
+    "description": "Fluid silhouettes and soft textures for everyday wear."
+  },
+  {
+    "slug": "men",
+    "name": "Men",
+    "description": "Relaxed tailoring in a quiet, considered palette."
+  },
+  {
+    "slug": "accessories",
+    "name": "Accessories",
+    "description": "The small details that finish a look."
+  }
+]

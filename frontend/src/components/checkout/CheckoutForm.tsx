@@ -33,7 +33,6 @@ export function CheckoutForm() {
       // Payment is a stub for this stage — no card data is sent anywhere,
       // it only satisfies form validation ahead of a real payment provider.
       await createOrder({
-        userId: user.id,
         items,
         shipping: {
           fullName: values.fullName,

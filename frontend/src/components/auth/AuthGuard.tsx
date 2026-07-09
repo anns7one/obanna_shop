@@ -8,16 +8,22 @@ import { useHasMounted } from "@/hooks/useHasMounted";
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const mounted = useHasMounted();
   const user = useAuthStore((s) => s.user);
+  const bootstrapped = useAuthStore((s) => s.bootstrapped);
   const router = useRouter();
   const pathname = usePathname();
 
+  // Wait for the silent-refresh bootstrap to resolve before deciding
+  // there's no session — otherwise a valid session gets redirected away
+  // on every page reload, since the in-memory access token starts null.
+  const ready = mounted && bootstrapped;
+
   useEffect(() => {
-    if (mounted && !user) {
+    if (ready && !user) {
       router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
     }
-  }, [mounted, user, pathname, router]);
+  }, [ready, user, pathname, router]);
 
-  if (!mounted || !user) {
+  if (!ready || !user) {
     return <div className="auth-loading">Loading…</div>;
   }
 

@@ -1868,10 +1868,14 @@ svg {
 /* ---------- Home page ---------- */
 
 .home-hero {
+  position: relative;
+  overflow: hidden;
   background: linear-gradient(to bottom right, var(--color-blush-50), var(--color-butter-50), var(--color-sky-50));
 }
 
 .home-inner {
+  position: relative;
+  z-index: 1;
   margin: 0 auto;
   display: flex;
   max-width: var(--container-max);
@@ -1879,6 +1883,200 @@ svg {
   align-items: flex-start;
   gap: 1.5rem;
   padding: 6rem 1rem;
+}
+
+/* ---------- Hero background (Aurora + blobs + particles) ---------- */
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  --parallax-x: 0;
+  --parallax-y: 0;
+}
+
+.hero-bg-aurora {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 140%;
+  height: 140%;
+  transform: translate(-50%, -50%);
+  background: conic-gradient(
+    from 0deg,
+    var(--color-blush-100) 0deg,
+    var(--color-sky-100) 90deg,
+    var(--color-butter-100) 180deg,
+    var(--color-blush-100) 270deg,
+    var(--color-sky-100) 360deg
+  );
+  filter: blur(80px);
+  opacity: 0.35;
+  animation: hero-aurora-spin 60s linear infinite;
+}
+
+.hero-bg-blob-wrap {
+  position: absolute;
+  transform: translate3d(calc(var(--parallax-x, 0) * var(--depth, 0.02) * 1px), calc(var(--parallax-y, 0) * var(--depth, 0.02) * 1px), 0);
+  transition: transform 0.35s ease-out;
+}
+
+.hero-bg-blob {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.5;
+  animation: hero-blob-drift 24s ease-in-out infinite alternate;
+}
+
+.hero-bg-blob-blush {
+  background: var(--color-blush-200);
+  animation-duration: 22s;
+  animation-delay: -3s;
+}
+
+.hero-bg-blob-sky {
+  background: var(--color-sky-100);
+  animation-duration: 27s;
+  animation-delay: -9s;
+}
+
+.hero-bg-blob-butter {
+  background: var(--color-butter-200);
+  animation-duration: 33s;
+  animation-delay: -15s;
+}
+
+.hero-bg-particles {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-bg-particle-wrap {
+  position: absolute;
+  transform: translate3d(calc(var(--parallax-x, 0) * var(--depth, 0.05) * 1px), calc(var(--parallax-y, 0) * var(--depth, 0.05) * 1px), 0);
+  transition: transform 0.35s ease-out;
+}
+
+.hero-bg-particle {
+  display: block;
+  border-radius: 50%;
+  animation-name: hero-particle-float;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+.hero-bg-particle-blush {
+  background: var(--color-blush-500);
+  opacity: 0.5;
+}
+
+.hero-bg-particle-sky {
+  background: var(--color-sky-600);
+  opacity: 0.45;
+}
+
+.hero-bg-particle-butter {
+  background: var(--color-butter-600);
+  opacity: 0.5;
+}
+
+@keyframes hero-aurora-spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes hero-blob-drift {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(3%, -4%) scale(1.08);
+  }
+  100% {
+    transform: translate(-3%, 3%) scale(0.96);
+  }
+}
+
+@keyframes hero-particle-float {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-16px);
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-bg-aurora {
+    display: none;
+  }
+
+  .hero-bg-particles > .hero-bg-particle-wrap:nth-child(n + 4) {
+    display: none;
+  }
+
+  .hero-bg-blob {
+    filter: blur(50px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-bg-aurora,
+  .hero-bg-blob,
+  .hero-bg-particle {
+    animation: none;
+  }
+
+  .hero-bg-blob-wrap,
+  .hero-bg-particle-wrap {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* ---------- Hero entrance animation ---------- */
+
+.home-fade-in {
+  animation: home-fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.home-fade-in-1 {
+  animation-delay: 0.05s;
+}
+
+.home-fade-in-2 {
+  animation-delay: 0.15s;
+}
+
+.home-fade-in-3 {
+  animation-delay: 0.25s;
+}
+
+.home-fade-in-4 {
+  animation-delay: 0.35s;
+}
+
+@keyframes home-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-fade-in {
+    animation: none;
+  }
 }
 
 @media (min-width: 768px) {

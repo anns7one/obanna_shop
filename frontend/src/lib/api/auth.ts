@@ -1,36 +1,12 @@
-import { readCollection, writeCollection } from "@/lib/mockDb";
+import { apiFetch, ApiError } from "@/lib/api/client";
+import { useAuthStore } from "@/store/authStore";
 import type { User } from "@/lib/types";
-import { delay } from "@/lib/utils";
-
-/**
- * Stage-1 mock auth. There is no backend yet, so this simulates
- * `POST /auth/register` and `POST /auth/login` against localStorage.
- *
- * This is NOT real security — passwords never leave the browser and the
- * "hash" below is only there so we don't store them in plain text on disk.
- * Stage 2 replaces this file with real calls to a NestJS/FastAPI backend
- * doing bcrypt + JWT (access + refresh tokens); nothing outside this file
- * (stores, forms, guards) should need to change.
- */
-
-const USERS_KEY = "obanna_mock_users";
-
-interface StoredUser extends User {
-  passwordHash: string;
-}
 
 export class AuthError extends Error {}
 
-async function hash(value: string): Promise<string> {
-  const bytes = new TextEncoder().encode(value);
-  const digest = await crypto.subtle.digest("SHA-256", bytes);
-  return Array.from(new Uint8Array(digest))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-}
-
-function toPublicUser(user: StoredUser): User {
-  return { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName };
+interface AuthResponse {
+  user: User;
+  accessToken: string;
 }
 
 export interface RegisterInput {
@@ -41,24 +17,26 @@ export interface RegisterInput {
 }
 
 export async function registerUser(input: RegisterInput): Promise<User> {
-  await delay(300);
-  const users = readCollection<StoredUser>(USERS_KEY);
-  const email = input.email.trim().toLowerCase();
-
-  if (users.some((u) => u.email === email)) {
-    throw new AuthError("An account with this email already exists.");
+  try {
+    const { user, accessToken } = await apiFetch<AuthResponse>("/auth/register", {
+      method: "POST",
+      skipAuth: true,
+      body: JSON.stringify({
+        email: input.email,
+        password: input.password,
+        // Already verified equal by the frontend's own Zod schema before
+        // this is called — the backend re-validates it independently too.
+        confirmPassword: input.password,
+        firstName: input.firstName,
+        lastName: input.lastName,
+      }),
+    });
+    useAuthStore.getState().setAccessToken(accessToken);
+    return user;
+  } catch (err) {
+    if (err instanceof ApiError) throw new AuthError(err.message);
+    throw err;
   }
-
-  const newUser: StoredUser = {
-    id: crypto.randomUUID(),
-    email,
-    firstName: input.firstName.trim(),
-    lastName: input.lastName.trim(),
-    passwordHash: await hash(input.password),
-  };
-
-  writeCollection(USERS_KEY, [...users, newUser]);
-  return toPublicUser(newUser);
 }
 
 export interface LoginInput {
@@ -67,15 +45,26 @@ export interface LoginInput {
 }
 
 export async function loginUser(input: LoginInput): Promise<User> {
-  await delay(300);
-  const users = readCollection<StoredUser>(USERS_KEY);
-  const email = input.email.trim().toLowerCase();
-  const passwordHash = await hash(input.password);
-
-  const found = users.find((u) => u.email === email);
-  if (!found || found.passwordHash !== passwordHash) {
-    throw new AuthError("Invalid email or password.");
+  try {
+    const { user, accessToken } = await apiFetch<AuthResponse>("/auth/login", {
+      method: "POST",
+      skipAuth: true,
+      body: JSON.stringify(input),
+    });
+    useAuthStore.getState().setAccessToken(accessToken);
+    return user;
+  } catch (err) {
+    if (err instanceof ApiError) throw new AuthError(err.message);
+    throw err;
   }
+}
 
-  return toPublicUser(found);
+/** Revokes the refresh session server-side. Best-effort — the caller clears
+ * local state regardless of whether this succeeds. */
+export async function logoutUser(): Promise<void> {
+  try {
+    await apiFetch<void>("/auth/logout", { method: "POST", skipAuth: true });
+  } catch {
+    // Session is being cleared locally either way.
+  }
 }

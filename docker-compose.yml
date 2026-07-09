@@ -1,0 +1,56 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-obanna}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-obanna}
+      POSTGRES_DB: ${POSTGRES_DB:-obanna}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-obanna}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-obanna}:${POSTGRES_PASSWORD:-obanna}@postgres:5432/${POSTGRES_DB:-obanna}
+      TEST_DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-obanna}:${POSTGRES_PASSWORD:-obanna}@postgres:5432/${POSTGRES_DB:-obanna}_test
+      REDIS_URL: redis://redis:6379/0
+      SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY in a root .env file}
+      CORS_ORIGINS: http://localhost:3000
+      ENVIRONMENT: development
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8000/api/v1
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres_data:
