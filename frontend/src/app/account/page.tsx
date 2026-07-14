@@ -21,10 +21,10 @@ function AccountContent() {
 
   return (
     <div className="account-page">
-      <h1 className="account-page-title">Hi, {user.firstName}</h1>
-      <p className="account-page-email">{user.email}</p>
+      <h1 className="account-page-title fade-in fade-in-1">Hi, {user.firstName}</h1>
+      <p className="account-page-email fade-in fade-in-1">{user.email}</p>
 
-      <div className="account-page-grid">
+      <div className="account-page-grid fade-in fade-in-2">
         <Button href="/account/orders" variant="secondary" size="lg" className="account-page-link">
           Order history
         </Button>

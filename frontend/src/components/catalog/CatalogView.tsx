@@ -8,6 +8,7 @@ import { useProducts } from "@/hooks/useProducts";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { SortSelect } from "@/components/ui/SortSelect";
 import { Button } from "@/components/ui/Button";
+import { BlurText } from "@/components/motion/BlurText";
 import { cn } from "@/lib/utils";
 
 const sortLabels: Record<SortOption, string> = {
@@ -64,51 +65,58 @@ export function CatalogView() {
 
   return (
     <div className="catalog">
-      <div className="catalog-heading">
-        <h1 className="catalog-title">{categoryInfo ? categoryInfo.name : "All pieces"}</h1>
-        <p className="catalog-desc">
-          {categoryInfo ? categoryInfo.description : "Everything from the current collection, in one place."}
-        </p>
-      </div>
-
-      <div className="catalog-toolbar">
-        <div className="catalog-row">
-          <button
-            type="button"
-            onClick={() => updateParams({ category: undefined })}
-            aria-pressed={!activeCategory}
-            className={cn("catalog-pill", !activeCategory && "catalog-pill-selected")}
-          >
-            All
-          </button>
-          {categories.map((c) => (
-            <button
-              key={c.slug}
-              type="button"
-              onClick={() => updateParams({ category: c.slug })}
-              aria-pressed={activeCategory === c.slug}
-              className={cn("catalog-pill", toneClass[c.slug], activeCategory === c.slug && "catalog-pill-selected")}
-            >
-              {c.name}
-            </button>
-          ))}
+      <div className="catalog-banner">
+        <div className="catalog-heading">
+          <h1 className="catalog-title">
+            <BlurText
+              key={categoryInfo?.slug ?? "all"}
+              text={categoryInfo ? categoryInfo.name : "All pieces"}
+            />
+          </h1>
+          <p className="catalog-desc">
+            {categoryInfo ? categoryInfo.description : "Everything from the current collection, in one place."}
+          </p>
         </div>
 
-        <div className="catalog-sort">
-          {!isLoading && (
-            <span className="catalog-count">
-              {products?.length ?? 0} piece{products?.length === 1 ? "" : "s"}
-            </span>
-          )}
+        <div className="catalog-toolbar liquid-glass">
+          <div className="catalog-row">
+            <button
+              type="button"
+              onClick={() => updateParams({ category: undefined })}
+              aria-pressed={!activeCategory}
+              className={cn("catalog-pill", !activeCategory && "catalog-pill-selected")}
+            >
+              All
+            </button>
+            {categories.map((c) => (
+              <button
+                key={c.slug}
+                type="button"
+                onClick={() => updateParams({ category: c.slug })}
+                aria-pressed={activeCategory === c.slug}
+                className={cn("catalog-pill", toneClass[c.slug], activeCategory === c.slug && "catalog-pill-selected")}
+              >
+                {c.name}
+              </button>
+            ))}
+          </div>
 
-          <SortSelect
-            value={sortParam}
-            options={Object.entries(sortLabels).map(([value, label]) => ({
-              value: value as SortOption,
-              label,
-            }))}
-            onChange={(next) => updateParams({ sort: next })}
-          />
+          <div className="catalog-sort">
+            {!isLoading && (
+              <span className="catalog-count">
+                {products?.length ?? 0} piece{products?.length === 1 ? "" : "s"}
+              </span>
+            )}
+
+            <SortSelect
+              value={sortParam}
+              options={Object.entries(sortLabels).map(([value, label]) => ({
+                value: value as SortOption,
+                label,
+              }))}
+              onChange={(next) => updateParams({ sort: next })}
+            />
+          </div>
         </div>
       </div>
 

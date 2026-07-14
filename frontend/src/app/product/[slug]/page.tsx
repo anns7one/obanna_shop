@@ -7,6 +7,7 @@ import { PriceTag } from "@/components/ui/PriceTag";
 import { ProductActions } from "@/components/product/ProductActions";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { getCategory } from "@/lib/data/categories";
+import { RevealSection } from "@/components/motion/RevealSection";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
@@ -43,7 +44,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <span className="product-page-current">{product.title}</span>
       </nav>
 
-      <div className="product-page-layout">
+      <div className="product-page-layout fade-in fade-in-1">
         <div className="product-page-frame">
           <ProductImagePlaceholder title={product.title} category={product.category} className="product-page-image" />
         </div>
@@ -68,12 +69,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
       </div>
 
       {related.length > 0 && (
-        <section className="product-page-related">
+        <RevealSection className="product-page-related">
           <h2 className="product-page-related-title">You may also like</h2>
           <div className="product-page-related-grid">
             <ProductGrid products={related} />
           </div>
-        </section>
+        </RevealSection>
       )}
     </div>
   );

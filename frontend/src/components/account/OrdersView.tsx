@@ -23,7 +23,7 @@ function OrdersContent() {
 
   return (
     <div className="orders">
-      <h1 className="orders-title">Order history</h1>
+      <h1 className="orders-title fade-in fade-in-1">Order history</h1>
 
       {justPlacedOrder && (
         <div className="orders-success" role="status" aria-live="polite">
@@ -56,7 +56,7 @@ function OrdersContent() {
       )}
 
       {!isLoading && !isError && (
-        <div className="orders-list">
+        <div className="orders-list fade-in fade-in-2">
           {orders?.length === 0 && (
             <div className="orders-empty">
               <p className="orders-empty-title">No orders yet</p>

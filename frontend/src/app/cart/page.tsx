@@ -22,7 +22,7 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="page-empty">
+      <div className="page-empty fade-in">
         <h1 className="page-empty-title">Your cart is empty</h1>
         <p className="page-empty-hint">Pieces you add will show up here.</p>
         <Button href="/catalog" size="lg" className="page-empty-cta">
@@ -34,9 +34,9 @@ export default function CartPage() {
 
   return (
     <div className="cart-page">
-      <h1 className="cart-page-title">Your cart</h1>
+      <h1 className="cart-page-title fade-in fade-in-1">Your cart</h1>
 
-      <div className="cart-page-layout">
+      <div className="cart-page-layout fade-in fade-in-2">
         <ul className="cart-page-list">
           {items.map((item) => (
             <li key={`${item.productId}-${item.size}-${item.color}`} className="cart-page-item">

@@ -1187,6 +1187,19 @@ svg {
   }
 }
 
+.catalog-banner {
+  border-radius: var(--radius-lg);
+  background: linear-gradient(to bottom right, var(--color-blush-50), var(--color-butter-50), var(--color-sky-50));
+  padding: 2rem 1.25rem 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .catalog-banner {
+    padding: 2.5rem 2rem 2rem;
+  }
+}
+
 .catalog-heading {
   margin-bottom: 2rem;
   max-width: 42rem;
@@ -1211,15 +1224,11 @@ svg {
 }
 
 .catalog-toolbar {
-  margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-ink-200);
-  background: var(--color-white);
   padding: 1rem;
-  box-shadow: var(--shadow-sm);
 }
 
 @media (min-width: 640px) {
@@ -1544,9 +1553,11 @@ svg {
 /* ---------- Auth form (Login / Register) ---------- */
 
 .auth-form {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  padding-top: 60px;
 }
 
 .auth-form-row {
@@ -1577,6 +1588,130 @@ svg {
 
 .auth-form-link:hover {
   text-decoration: underline;
+}
+
+/* ---------- Password-field cat ---------- */
+
+.password-cat {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.password-cat-label {
+  border-radius: var(--radius-full);
+  background: var(--color-blush-50);
+  padding: 5px 11px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--color-blush-700);
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+}
+
+.password-cat-icon {
+  transform: rotate(-12deg);
+}
+
+.password-cat-svg {
+  display: block;
+  width: 68px;
+  height: 55px;
+  overflow: visible;
+}
+
+@media (max-width: 400px) {
+  .password-cat {
+    gap: 6px;
+  }
+
+  .password-cat-label {
+    padding: 4px 9px;
+    font-size: 13px;
+  }
+
+  .password-cat-svg {
+    width: 56px;
+    height: 45px;
+  }
+}
+
+.password-cat-ear {
+  fill: var(--color-blush-100);
+}
+
+.password-cat-ear-inner {
+  fill: var(--color-blush-200);
+}
+
+.password-cat-head {
+  fill: #ffffff;
+  stroke: var(--color-blush-200);
+  stroke-width: 2;
+}
+
+.password-cat-cheek {
+  fill: var(--color-blush-100);
+  opacity: 0.7;
+}
+
+.password-cat-whisker {
+  fill: none;
+  stroke: var(--color-ink-300);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.password-cat-eye {
+  fill: var(--color-ink-700);
+}
+
+.password-cat-nose {
+  fill: var(--color-blush-500);
+}
+
+.password-cat-mouth {
+  fill: none;
+  stroke: var(--color-ink-500);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.password-cat-paw {
+  fill: var(--color-butter-100);
+  stroke: var(--color-blush-200);
+  stroke-width: 1.5;
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: translateY(38px) scale(0.85);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.password-cat-paw circle {
+  fill: var(--color-blush-100);
+  stroke: none;
+}
+
+.password-cat-paw-left.is-active {
+  transform: translateY(0) rotate(-4deg) scale(1);
+}
+
+.password-cat-paw-right.is-active {
+  transform: translateY(0) rotate(4deg) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .password-cat-paw {
+    transition: none;
+  }
 }
 
 /* ---------- Checkout form ---------- */
@@ -2212,6 +2347,32 @@ svg {
   }
 }
 
+/* ---------- Generic page entrance fade (reuses the same keyframe as the
+   home hero) — for lighter-touch pages that get a subtle load-in but no
+   colored banner: cart, wishlist, checkout, product, account, orders. ---------- */
+
+.fade-in {
+  animation: home-fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.fade-in-1 {
+  animation-delay: 0.05s;
+}
+
+.fade-in-2 {
+  animation-delay: 0.15s;
+}
+
+.fade-in-3 {
+  animation-delay: 0.25s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in {
+    animation: none;
+  }
+}
+
 @media (min-width: 768px) {
   .home-inner {
     padding: 8rem 2rem;
@@ -2777,6 +2938,14 @@ svg {
   margin-top: 2rem;
 }
 
+/* ---------- Shared auth banner background (login / register) ---------- */
+
+.auth-banner {
+  display: flex;
+  justify-content: center;
+  background: linear-gradient(to bottom right, var(--color-blush-50), var(--color-butter-50), var(--color-sky-50));
+}
+
 /* ---------- Login page ---------- */
 
 .login-page {
@@ -2806,10 +2975,9 @@ svg {
 }
 
 .login-page-card {
+  flex-shrink: 0;
   margin-top: 2rem;
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-ink-200);
-  background: var(--color-white);
   padding: 1.5rem;
 }
 
@@ -2848,10 +3016,9 @@ svg {
 }
 
 .register-page-card {
+  flex-shrink: 0;
   margin-top: 2rem;
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-ink-200);
-  background: var(--color-white);
   padding: 1.5rem;
 }
 

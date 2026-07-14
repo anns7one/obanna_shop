@@ -10,18 +10,22 @@ import { registerUser, AuthError } from "@/lib/api/auth";
 import { useAuthStore } from "@/store/authStore";
 import { Input } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
+import { PasswordCat } from "@/components/auth/PasswordCat";
 
 export function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const setUser = useAuthStore((s) => s.setUser);
   const [formError, setFormError] = useState<string | null>(null);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<RegisterValues>({ resolver: zodResolver(registerSchema) });
+
+  const passwordField = register("password");
 
   async function onSubmit(values: RegisterValues) {
     setFormError(null);
@@ -36,6 +40,7 @@ export function RegisterForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="auth-form">
+      <PasswordCat active={isPasswordFocused} label="Sign up" />
       <div className="auth-form-row">
         <Input
           id="firstName"
@@ -67,7 +72,12 @@ export function RegisterForm() {
         autoComplete="new-password"
         hint="At least 8 characters, one uppercase letter and one number."
         error={errors.password?.message}
-        {...register("password")}
+        {...passwordField}
+        onFocus={() => setIsPasswordFocused(true)}
+        onBlur={(e) => {
+          setIsPasswordFocused(false);
+          passwordField.onBlur(e);
+        }}
       />
       <Input
         id="confirmPassword"

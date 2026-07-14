@@ -24,7 +24,7 @@ function CheckoutPageContent() {
 
   if (items.length === 0) {
     return (
-      <div className="page-empty">
+      <div className="page-empty fade-in">
         <h1 className="page-empty-title">Nothing to check out yet</h1>
         <p className="page-empty-hint">Add a few pieces to your cart first.</p>
         <Button href="/catalog" size="lg" className="page-empty-cta">
@@ -36,8 +36,8 @@ function CheckoutPageContent() {
 
   return (
     <div className="checkout-page">
-      <h1 className="checkout-page-title">Checkout</h1>
-      <div className="checkout-page-form">
+      <h1 className="checkout-page-title fade-in fade-in-1">Checkout</h1>
+      <div className="checkout-page-form fade-in fade-in-2">
         <CheckoutForm />
       </div>
     </div>

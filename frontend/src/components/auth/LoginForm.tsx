@@ -10,18 +10,22 @@ import { loginUser, AuthError } from "@/lib/api/auth";
 import { useAuthStore } from "@/store/authStore";
 import { Input } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
+import { PasswordCat } from "@/components/auth/PasswordCat";
 
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const setUser = useAuthStore((s) => s.setUser);
   const [formError, setFormError] = useState<string | null>(null);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginValues>({ resolver: zodResolver(loginSchema) });
+
+  const passwordField = register("password");
 
   async function onSubmit(values: LoginValues) {
     setFormError(null);
@@ -36,6 +40,7 @@ export function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="auth-form">
+      <PasswordCat active={isPasswordFocused} label="Sign in" />
       <Input
         id="email"
         label="Email"
@@ -50,7 +55,12 @@ export function LoginForm() {
         type="password"
         autoComplete="current-password"
         error={errors.password?.message}
-        {...register("password")}
+        {...passwordField}
+        onFocus={() => setIsPasswordFocused(true)}
+        onBlur={(e) => {
+          setIsPasswordFocused(false);
+          passwordField.onBlur(e);
+        }}
       />
 
       {formError && (
