@@ -11,7 +11,7 @@ from app.dependencies import get_current_user
 from app.models.user import User
 from app.redis_client import get_refresh_session_user, revoke_refresh_session, store_refresh_session
 from app.schemas.auth import AccessTokenResponse, AuthResponse
-from app.schemas.user import LoginRequest, RegisterRequest, UserRead
+from app.schemas.user import LoginRequest, RegisterRequest, UserRead, UserUpdate
 from app.security import (
     InvalidTokenError,
     TokenType,
@@ -142,4 +142,13 @@ async def logout(
 
 @router.get("/me", response_model=UserRead)
 async def me(current_user: CurrentUser) -> UserRead:
+    return UserRead.model_validate(current_user)
+
+
+@router.patch("/me", response_model=UserRead)
+async def update_me(payload: UserUpdate, current_user: CurrentUser, db: DbSession) -> UserRead:
+    current_user.first_name = payload.first_name
+    current_user.last_name = payload.last_name
+    await db.commit()
+    await db.refresh(current_user)
     return UserRead.model_validate(current_user)

@@ -7,7 +7,7 @@ import { HeroBackground } from "@/components/home/HeroBackground";
 import { ApproachSection } from "@/components/home/ApproachSection";
 import { BlurText } from "@/components/motion/BlurText";
 import { RevealSection } from "@/components/motion/RevealSection";
-import { Button } from "@/components/ui/Button";
+import { ArrowLink } from "@/components/ui/ArrowLink";
 
 export default async function HomePage() {
   const newArrivals = (await fetchProducts({ sort: "newest" })).slice(0, 4);
@@ -26,9 +26,7 @@ export default async function HomePage() {
             like the calmest part of your day.
           </p>
           <span className="home-fade-in home-fade-in-4">
-            <Button href="/catalog" size="lg">
-              Shop the collection
-            </Button>
+            <ArrowLink href="/catalog">Shop the collection</ArrowLink>
           </span>
         </div>
       </section>
@@ -47,9 +45,7 @@ export default async function HomePage() {
       <RevealSection className="home-section">
         <div className="home-head">
           <h2 className="home-heading">New arrivals</h2>
-          <Button href="/catalog?sort=newest" variant="ghost" size="sm">
-            View all
-          </Button>
+          <ArrowLink href="/catalog?sort=newest">View all</ArrowLink>
         </div>
         <ProductGrid products={newArrivals} />
       </RevealSection>

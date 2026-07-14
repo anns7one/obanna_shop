@@ -7,7 +7,7 @@ from slowapi.middleware import SlowAPIMiddleware
 from app.config import get_settings
 from app.core.rate_limit import limiter
 from app.core.security_headers import SecurityHeadersMiddleware
-from app.routers import auth, catalog, orders
+from app.routers import addresses, auth, catalog, orders, payment_methods
 
 settings = get_settings()
 
@@ -30,6 +30,8 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(catalog.router, prefix="/api/v1")
 app.include_router(orders.router, prefix="/api/v1")
+app.include_router(addresses.router, prefix="/api/v1")
+app.include_router(payment_methods.router, prefix="/api/v1")
 
 
 @app.get("/health", tags=["health"])

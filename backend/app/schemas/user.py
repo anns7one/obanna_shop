@@ -12,6 +12,11 @@ class UserRead(CamelModel):
     last_name: str
 
 
+class UserUpdate(CamelModel):
+    first_name: str = Field(min_length=1)
+    last_name: str = Field(min_length=1)
+
+
 class RegisterRequest(CamelModel):
     email: EmailStr
     password: str = Field(min_length=8)

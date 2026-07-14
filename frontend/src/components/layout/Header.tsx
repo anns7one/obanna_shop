@@ -14,12 +14,14 @@ import { cn } from "@/lib/utils";
 const navLinks = [
   { href: "/catalog", label: "All" },
   ...categories.map((c) => ({ href: `/catalog?category=${c.slug}`, label: c.name })),
+  { href: "/sale", label: "Sale", accent: true },
 ];
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [promoOpen, setPromoOpen] = useState(true);
   const router = useRouter();
   const mounted = useHasMounted();
 
@@ -35,6 +37,21 @@ export function Header() {
 
   return (
     <>
+      {promoOpen && (
+        <div className="promo-bar">
+          <span className="promo-bar-spacer" aria-hidden="true" />
+          <p className="promo-bar-text">Free shipping on orders over $75 &middot; New arrivals just landed</p>
+          <button
+            type="button"
+            className="promo-bar-close"
+            onClick={() => setPromoOpen(false)}
+            aria-label="Dismiss announcement"
+          >
+            <X size={14} aria-hidden />
+          </button>
+        </div>
+      )}
+
       <header className="header liquid-glass">
         <div className="header-bar">
           <button
@@ -52,7 +69,11 @@ export function Header() {
 
           <nav className="header-nav">
             {navLinks.map((link) => (
-              <Link key={link.href} href={link.href} className="header-link">
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn("header-link", link.accent && "header-link-accent")}
+              >
                 {link.label}
               </Link>
             ))}
@@ -143,7 +164,7 @@ export function Header() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
-                className="header-item"
+                className={cn("header-item", link.accent && "header-item-accent")}
               >
                 {link.label}
               </Link>

@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 import { formatPrice } from "@/lib/utils";
 import type { Order, OrderStatus } from "@/lib/types";
 
@@ -7,6 +8,7 @@ const statusTone: Record<OrderStatus, "blush" | "sky" | "butter" | "ink"> = {
   confirmed: "sky",
   shipped: "sky",
   delivered: "blush",
+  cancelled: "ink",
 };
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
@@ -15,7 +17,15 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
   day: "numeric",
 });
 
-export function OrderCard({ order }: { order: Order }) {
+interface OrderCardProps {
+  order: Order;
+  onCancel?: (orderId: string) => void;
+  cancelling?: boolean;
+}
+
+export function OrderCard({ order, onCancel, cancelling = false }: OrderCardProps) {
+  const canCancel = Boolean(onCancel) && (order.status === "processing" || order.status === "confirmed");
+
   return (
     <article className="orders-order">
       <header className="orders-head">
@@ -41,6 +51,14 @@ export function OrderCard({ order }: { order: Order }) {
         <span>Total</span>
         <span>{formatPrice(order.totalPrice)}</span>
       </footer>
+
+      {canCancel && (
+        <div className="orders-actions">
+          <Button variant="ghost" size="sm" disabled={cancelling} onClick={() => onCancel?.(order.id)}>
+            {cancelling ? "Cancelling…" : "Cancel order"}
+          </Button>
+        </div>
+      )}
     </article>
   );
 }

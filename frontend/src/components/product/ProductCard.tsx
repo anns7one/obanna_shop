@@ -10,12 +10,15 @@ import { useWishlistStore } from "@/store/wishlistStore";
 import { useHasMounted } from "@/hooks/useHasMounted";
 import { cn } from "@/lib/utils";
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product, showDiscount = false }: { product: Product; showDiscount?: boolean }) {
   const mounted = useHasMounted();
   const isWishlisted = useWishlistStore((s) => s.productIds.includes(product.id));
   const toggleWishlist = useWishlistStore((s) => s.toggle);
 
   const onSale = Boolean(product.compareAtPrice && product.compareAtPrice > product.price);
+  const discountPercent = onSale
+    ? Math.round((1 - product.price / product.compareAtPrice!) * 100)
+    : 0;
 
   return (
     <div className="product-card">
@@ -24,7 +27,7 @@ export function ProductCard({ product }: { product: Product }) {
           <ProductImagePlaceholder title={product.title} category={product.category} className="product-card-image" />
           <div className="product-card-badges">
             {product.isNew && <Badge tone="sky">New</Badge>}
-            {onSale && <Badge tone="blush">Sale</Badge>}
+            {onSale && <Badge tone="blush">{showDiscount ? `Save ${discountPercent}%` : "Sale"}</Badge>}
           </div>
         </div>
       </Link>

@@ -7,7 +7,7 @@ from sqlalchemy.orm import selectinload
 
 from app.database import get_db
 from app.dependencies import get_current_user
-from app.models.order import Order, OrderItem
+from app.models.order import Order, OrderItem, OrderStatus
 from app.models.product import Product
 from app.models.user import User
 from app.schemas.order import OrderCreateRequest, OrderRead
@@ -86,3 +86,21 @@ async def list_my_orders(current_user: CurrentUser, db: DbSession) -> list[Order
     )
     result = await db.scalars(stmt)
     return list(result)
+
+
+@router.patch("/{order_id}/cancel", response_model=OrderRead)
+async def cancel_order(order_id: str, current_user: CurrentUser, db: DbSession) -> Order:
+    stmt = select(Order).where(Order.id == order_id).options(selectinload(Order.items))
+    order = await db.scalar(stmt)
+    if order is None or order.user_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found")
+
+    if order.status not in (OrderStatus.PROCESSING, OrderStatus.CONFIRMED):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="This order has already shipped and can no longer be cancelled",
+        )
+
+    order.status = OrderStatus.CANCELLED
+    await db.commit()
+    return order

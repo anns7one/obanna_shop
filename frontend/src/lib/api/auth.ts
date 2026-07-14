@@ -68,3 +68,12 @@ export async function logoutUser(): Promise<void> {
     // Session is being cleared locally either way.
   }
 }
+
+export interface UpdateProfileInput {
+  firstName: string;
+  lastName: string;
+}
+
+export async function updateProfile(input: UpdateProfileInput): Promise<User> {
+  return apiFetch<User>("/auth/me", { method: "PATCH", body: JSON.stringify(input) });
+}

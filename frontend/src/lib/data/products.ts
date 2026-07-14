@@ -41,6 +41,7 @@ export const products: Product[] = [
     description:
       "An oversized cardigan in brushed cotton-knit, with mother-of-pearl buttons and dropped shoulders.",
     price: 112,
+    compareAtPrice: 145,
     category: "women",
     colors: ["Butter", "Ivory", "Sky"],
     sizes: SIZES_APPAREL,
@@ -142,6 +143,7 @@ export const products: Product[] = [
     description:
       "An easy-fit linen shirt with a soft collar, made to be worn open over a tee.",
     price: 92,
+    compareAtPrice: 118,
     category: "men",
     colors: ["Ivory", "Butter"],
     sizes: SIZES_APPAREL,
@@ -227,6 +229,7 @@ export const products: Product[] = [
     description:
       "A lightly padded shell jacket with a soft brushed lining and stand collar.",
     price: 168,
+    compareAtPrice: 210,
     category: "men",
     colors: ["Ivory", "Sky"],
     sizes: SIZES_APPAREL,
@@ -243,6 +246,7 @@ export const products: Product[] = [
     description:
       "A hand-woven straw tote lined in soft cotton, with leather-effect handles.",
     price: 68,
+    compareAtPrice: 88,
     category: "accessories",
     colors: ["Butter", "Ivory"],
     sizes: SIZES_ONE,
@@ -327,6 +331,7 @@ export const products: Product[] = [
     description:
       "An oversized scarf in brushed wool-blend, soft enough for everyday wrapping.",
     price: 58,
+    compareAtPrice: 75,
     category: "accessories",
     colors: ["Ivory", "Sky"],
     sizes: SIZES_ONE,

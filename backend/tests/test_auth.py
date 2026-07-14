@@ -96,6 +96,30 @@ async def test_me_returns_current_user(client: AsyncClient):
     assert response.json()["email"] == "anna@example.com"
 
 
+async def test_update_me_changes_name_but_not_email(client: AsyncClient):
+    register_response = await client.post("/api/v1/auth/register", json=_register_payload())
+    token = register_response.json()["accessToken"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    response = await client.patch(
+        "/api/v1/auth/me", json={"firstName": "Anya", "lastName": "Petrova"}, headers=headers
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["firstName"] == "Anya"
+    assert body["lastName"] == "Petrova"
+    assert body["email"] == "anna@example.com"
+
+    persisted = await client.get("/api/v1/auth/me", headers=headers)
+    assert persisted.json()["firstName"] == "Anya"
+
+
+async def test_update_me_requires_auth(client: AsyncClient):
+    response = await client.patch("/api/v1/auth/me", json={"firstName": "Anya", "lastName": "Petrova"})
+    assert response.status_code == 401
+
+
 async def test_refresh_issues_a_new_access_token(client: AsyncClient):
     await client.post("/api/v1/auth/register", json=_register_payload())
 

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isValidCardNumber } from "@/lib/card";
 
 export const loginSchema = z.object({
   email: z.string().trim().min(1, "Email is required.").email("Enter a valid email address."),
@@ -54,3 +55,38 @@ export type PaymentValues = z.infer<typeof paymentSchema>;
 
 export const checkoutSchema = shippingSchema.merge(paymentSchema);
 export type CheckoutValues = z.infer<typeof checkoutSchema>;
+
+export const addressFormSchema = shippingSchema.extend({
+  label: z.string().trim().min(1, "Give this address a label, like Home or Work."),
+  isDefault: z.boolean(),
+});
+export type AddressFormValues = z.infer<typeof addressFormSchema>;
+
+export const profileSchema = z.object({
+  firstName: z.string().trim().min(1, "First name is required."),
+  lastName: z.string().trim().min(1, "Last name is required."),
+});
+export type ProfileValues = z.infer<typeof profileSchema>;
+
+/** Card number and CVC live only in this form's local state — see
+ * components/account/PaymentMethodForm.tsx, which derives brand/last4 from
+ * `cardNumber` and never includes cardNumber or cvc in the API request. */
+export const cardFormSchema = z.object({
+  cardName: z.string().trim().min(1, "Name on card is required."),
+  cardNumber: z
+    .string()
+    .trim()
+    .regex(/^[0-9\s]{12,23}$/, "Enter a valid card number.")
+    .refine(isValidCardNumber, "That card number doesn't look right."),
+  expiry: z
+    .string()
+    .trim()
+    .regex(/^(0[1-9]|1[0-2])\/[0-9]{2}$/, "Use MM/YY format.")
+    .refine((value) => {
+      const [month, year] = value.split("/").map(Number);
+      const expiry = new Date(2000 + year, month);
+      return expiry > new Date();
+    }, "This card has expired."),
+  cvc: z.string().trim().regex(/^[0-9]{3,4}$/, "Enter a valid CVC."),
+});
+export type CardFormValues = z.infer<typeof cardFormSchema>;

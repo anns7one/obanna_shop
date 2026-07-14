@@ -13,6 +13,7 @@ class OrderStatus(StrEnum):
     CONFIRMED = "confirmed"
     SHIPPED = "shipped"
     DELIVERED = "delivered"
+    CANCELLED = "cancelled"
 
 
 class Order(Base):

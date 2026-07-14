@@ -1,55 +1,31 @@
 "use client";
 
-import { AuthGuard } from "@/components/auth/AuthGuard";
 import { useAuthStore } from "@/store/authStore";
-import { logoutUser } from "@/lib/api/auth";
+import { Avatar } from "@/components/account/Avatar";
+import { ProfileForm } from "@/components/account/ProfileForm";
 import { Button } from "@/components/ui/Button";
 
 export default function AccountPage() {
-  return (
-    <AuthGuard>
-      <AccountContent />
-    </AuthGuard>
-  );
-}
-
-function AccountContent() {
   const user = useAuthStore((s) => s.user);
-  const logout = useAuthStore((s) => s.logout);
-
   if (!user) return null;
 
   return (
     <div className="account-page">
-      <h1 className="account-page-title fade-in fade-in-1">Hi, {user.firstName}</h1>
-      <p className="account-page-email fade-in fade-in-1">{user.email}</p>
-
-      <div className="account-page-grid fade-in fade-in-2">
-        <Button href="/account/orders" variant="secondary" size="lg" className="account-page-link">
-          Order history
-        </Button>
-        <Button href="/wishlist" variant="secondary" size="lg" className="account-page-link">
-          Wishlist
-        </Button>
+      <div className="account-page-header">
+        <Avatar firstName={user.firstName} lastName={user.lastName} size="lg" />
+        <div>
+          <h1 className="account-page-title">Personal data</h1>
+          <p className="account-page-hint">Update the name on your account.</p>
+        </div>
       </div>
 
-      <Button
-        variant="ghost"
-        size="sm"
-        className="account-page-logout"
-        onClick={() => {
-          // Revoke the server-side refresh session first (best-effort),
-          // then clear local state and hard-navigate: avoids racing
-          // AuthGuard's own redirect effect, which fires the instant
-          // `user` goes null on this guarded page.
-          logoutUser().finally(() => {
-            logout();
-            window.location.assign("/");
-          });
-        }}
-      >
-        Log out
-      </Button>
+      <ProfileForm />
+
+      <div className="account-page-footer">
+        <Button href="/wishlist" variant="ghost" size="sm">
+          View wishlist
+        </Button>
+      </div>
     </div>
   );
 }

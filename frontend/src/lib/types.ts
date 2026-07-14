@@ -51,7 +51,7 @@ export interface ShippingDetails {
   phone: string;
 }
 
-export type OrderStatus = "processing" | "confirmed" | "shipped" | "delivered";
+export type OrderStatus = "processing" | "confirmed" | "shipped" | "delivered" | "cancelled";
 
 export interface OrderItem {
   productId: string;
@@ -70,4 +70,28 @@ export interface Order {
   status: OrderStatus;
   shipping: ShippingDetails;
   createdAt: string;
+}
+
+export interface Address {
+  id: string;
+  label: string;
+  fullName: string;
+  address: string;
+  city: string;
+  postalCode: string;
+  country: string;
+  phone: string;
+  isDefault: boolean;
+}
+
+export type CardBrand = "visa" | "mastercard" | "amex" | "other";
+
+/** Never more than this — no card number, no CVV, nothing to steal. */
+export interface PaymentMethod {
+  id: string;
+  brand: CardBrand;
+  last4: string;
+  expMonth: number;
+  expYear: number;
+  isDefault: boolean;
 }

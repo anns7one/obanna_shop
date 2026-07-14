@@ -29,3 +29,7 @@ export async function fetchMyOrders(userId: string | undefined): Promise<Order[]
   void userId;
   return apiFetch<Order[]>("/orders/my");
 }
+
+export async function cancelOrder(orderId: string): Promise<Order> {
+  return apiFetch<Order>(`/orders/${orderId}/cancel`, { method: "PATCH" });
+}

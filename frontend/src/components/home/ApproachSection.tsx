@@ -37,7 +37,6 @@ export function ApproachSection() {
   return (
     <RevealSection className="approach">
       <div className="approach-inner">
-        <p className="approach-kicker">{"// Our approach"}</p>
         <h2 className="approach-heading">
           Quietly
           <br />

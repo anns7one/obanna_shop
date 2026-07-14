@@ -85,6 +85,43 @@ async def test_create_order_rejects_unknown_product(client: AsyncClient, sample_
     assert response.status_code == 400
 
 
+async def test_cancel_order_marks_it_cancelled(client: AsyncClient, sample_products):
+    token = await _register_and_get_token(client)
+    headers = {"Authorization": f"Bearer {token}"}
+
+    payload = {
+        "items": [{"productId": "w-01", "size": "M", "color": "Blush", "quantity": 1}],
+        "shipping": SHIPPING,
+    }
+    created = await client.post("/api/v1/orders", json=payload, headers=headers)
+    order_id = created.json()["id"]
+
+    response = await client.patch(f"/api/v1/orders/{order_id}/cancel", headers=headers)
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "cancelled"
+
+
+async def test_cannot_cancel_another_users_order(client: AsyncClient, sample_products):
+    token_a = await _register_and_get_token(client, email="buyer-a@example.com")
+    token_b = await _register_and_get_token(client, email="buyer-b@example.com")
+
+    payload = {
+        "items": [{"productId": "w-01", "size": "M", "color": "Blush", "quantity": 1}],
+        "shipping": SHIPPING,
+    }
+    created = await client.post(
+        "/api/v1/orders", json=payload, headers={"Authorization": f"Bearer {token_a}"}
+    )
+    order_id = created.json()["id"]
+
+    response = await client.patch(
+        f"/api/v1/orders/{order_id}/cancel", headers={"Authorization": f"Bearer {token_b}"}
+    )
+
+    assert response.status_code == 404
+
+
 async def test_list_my_orders_only_returns_the_caller_own_orders(client: AsyncClient, sample_products):
     token_a = await _register_and_get_token(client, email="buyer-a@example.com")
     token_b = await _register_and_get_token(client, email="buyer-b@example.com")
