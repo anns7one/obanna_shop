@@ -14,7 +14,7 @@ export function CategoryTile({ category }: { category: Category }) {
       <div className="category-tile-overlay" />
       <span className="category-tile-name">{category.name}</span>
       <span className="category-tile-desc">{category.description}</span>
-      <span className="category-tile-cta">Shop {category.name}</span>
+      <span className="category-tile-cta liquid-glass">Shop {category.name}</span>
     </Link>
   );
 }

@@ -5,6 +5,7 @@ import type { CSSProperties } from "react";
 
 interface Blob {
   tone: "blush" | "sky" | "butter";
+  variant?: "alt";
   depth: number;
   style: CSSProperties;
 }
@@ -13,6 +14,8 @@ const BLOBS: Blob[] = [
   { tone: "blush", depth: 0.02, style: { top: "-8%", left: "2%", width: "26rem", height: "26rem" } },
   { tone: "sky", depth: 0.035, style: { top: "6%", right: "-6%", width: "22rem", height: "22rem" } },
   { tone: "butter", depth: 0.015, style: { bottom: "-14%", left: "32%", width: "24rem", height: "24rem" } },
+  { tone: "sky", variant: "alt", depth: 0.025, style: { top: "42%", left: "-10%", width: "18rem", height: "18rem" } },
+  { tone: "blush", variant: "alt", depth: 0.03, style: { bottom: "2%", right: "-8%", width: "20rem", height: "20rem" } },
 ];
 
 interface Particle {
@@ -77,6 +80,7 @@ export function HeroBackground() {
   return (
     <div ref={rootRef} className="hero-bg" aria-hidden="true">
       <div className="hero-bg-aurora" />
+      <div className="hero-bg-breath" />
 
       {BLOBS.map((blob, i) => (
         <span
@@ -84,7 +88,9 @@ export function HeroBackground() {
           className="hero-bg-blob-wrap"
           style={{ ...blob.style, "--depth": blob.depth } as CSSProperties}
         >
-          <span className={`hero-bg-blob hero-bg-blob-${blob.tone}`} />
+          <span
+            className={`hero-bg-blob hero-bg-blob-${blob.tone}${blob.variant ? `-${blob.variant}` : ""}`}
+          />
         </span>
       ))}
 
@@ -102,6 +108,14 @@ export function HeroBackground() {
           </span>
         ))}
       </div>
+
+      <svg className="hero-bg-grain">
+        <filter id="hero-grain-filter">
+          <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch" />
+          <feColorMatrix type="saturate" values="0" />
+        </filter>
+        <rect width="100%" height="100%" filter="url(#hero-grain-filter)" />
+      </svg>
     </div>
   );
 }

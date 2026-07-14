@@ -4,6 +4,9 @@ import { CategoryTile } from "@/components/home/CategoryTile";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { NewsletterForm } from "@/components/home/NewsletterForm";
 import { HeroBackground } from "@/components/home/HeroBackground";
+import { ApproachSection } from "@/components/home/ApproachSection";
+import { BlurText } from "@/components/motion/BlurText";
+import { RevealSection } from "@/components/motion/RevealSection";
 import { Button } from "@/components/ui/Button";
 
 export default async function HomePage() {
@@ -14,9 +17,9 @@ export default async function HomePage() {
       <section className="home-hero">
         <HeroBackground />
         <div className="home-inner">
-          <span className="home-badge home-fade-in home-fade-in-1">New season</span>
-          <h1 className="home-title home-fade-in home-fade-in-2">
-            Soft-spoken essentials for everyday wear
+          <span className="home-badge liquid-glass home-fade-in home-fade-in-1">New season</span>
+          <h1 className="home-title">
+            <BlurText text="Soft-spoken essentials for everyday wear" />
           </h1>
           <p className="home-subtitle home-fade-in home-fade-in-3">
             A quiet, considered showroom of women&apos;s, men&apos;s and accessory pieces — made to feel
@@ -30,16 +33,18 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="home-section">
+      <ApproachSection />
+
+      <RevealSection className="home-section">
         <h2 className="home-heading">Shop by category</h2>
         <div className="home-grid">
           {categories.map((category) => (
             <CategoryTile key={category.slug} category={category} />
           ))}
         </div>
-      </section>
+      </RevealSection>
 
-      <section className="home-section">
+      <RevealSection className="home-section">
         <div className="home-head">
           <h2 className="home-heading">New arrivals</h2>
           <Button href="/catalog?sort=newest" variant="ghost" size="sm">
@@ -47,15 +52,15 @@ export default async function HomePage() {
           </Button>
         </div>
         <ProductGrid products={newArrivals} />
-      </section>
+      </RevealSection>
 
-      <section className="home-section">
+      <RevealSection className="home-section">
         <div className="home-newsletter">
           <h2 className="home-heading">Stay in the loop</h2>
           <p className="home-copy">Occasional notes on new arrivals and restocks — nothing more.</p>
           <NewsletterForm />
         </div>
-      </section>
+      </RevealSection>
     </div>
   );
 }

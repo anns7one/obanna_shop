@@ -597,9 +597,19 @@ svg {
   position: sticky;
   top: 0;
   z-index: 40;
+  /* <body> is a column flexbox; a flex item's automatic min-height drops
+     to 0 (instead of its content height) once it has overflow other than
+     visible — which .liquid-glass sets. Without this, the header collapses
+     to ~1px and its contents get clipped away. */
+  flex-shrink: 0;
+}
+
+/* Higher specificity than the bare .liquid-glass rule (which sets
+   position: relative and border: none) — the header must stay sticky and
+   keep its bottom divider even while wearing the glass treatment. */
+.header.liquid-glass {
+  position: sticky;
   border-bottom: 1px solid var(--color-ink-200);
-  background: rgba(255, 253, 251, 0.95);
-  backdrop-filter: blur(4px);
 }
 
 .header-bar {
@@ -967,16 +977,22 @@ svg {
   aspect-ratio: 4 / 5;
   overflow: hidden;
   border-radius: var(--radius-lg);
+  transition: box-shadow 0.4s ease, transform 0.4s ease;
 }
 
 .product-card-image {
   height: 100%;
   width: 100%;
-  transition: transform 0.5s;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.product-card-link:hover .product-card-frame {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
 }
 
 .product-card-link:hover .product-card-image {
-  transform: scale(1.05);
+  transform: scale(1.08);
 }
 
 .product-card-badges {
@@ -1417,6 +1433,12 @@ svg {
   overflow: hidden;
   border-radius: var(--radius-lg);
   padding: 1.5rem;
+  transition: box-shadow 0.4s ease, transform 0.4s ease;
+}
+
+.category-tile:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
 }
 
 .category-tile-women {
@@ -1458,15 +1480,14 @@ svg {
   margin-top: 1rem;
   display: inline-block;
   width: fit-content;
+  flex-shrink: 0;
   border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.8);
   padding: 0.5rem 1rem;
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.02em;
   text-transform: uppercase;
   color: var(--color-ink-900);
-  backdrop-filter: blur(4px);
   transition: background-color 0.2s;
 }
 
@@ -1885,6 +1906,64 @@ svg {
   padding: 6rem 1rem;
 }
 
+/* ---------- Liquid glass (pastel variant) ----------
+   A soft, translucent "frosted glass" surface with a subtle glowing edge —
+   adapted from the classic dark liquid-glass look to fit the light pastel
+   palette: white/blush glow instead of white/black, low-alpha white panel
+   instead of near-black. */
+
+.liquid-glass {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: none;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8), var(--shadow-sm);
+}
+
+.liquid-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 0.35) 20%,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0) 60%,
+    rgba(247, 198, 217, 0.4) 80%,
+    rgba(247, 198, 217, 0.8) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.liquid-glass-strong {
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 4px 24px rgba(45, 42, 50, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.9);
+}
+
+.liquid-glass-strong::before {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 255, 255, 0.45) 20%,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0) 60%,
+    rgba(247, 198, 217, 0.5) 80%,
+    rgba(247, 198, 217, 0.95) 100%
+  );
+}
+
 /* ---------- Hero background (Aurora + blobs + particles) ---------- */
 
 .hero-bg {
@@ -1950,6 +2029,45 @@ svg {
   animation-delay: -15s;
 }
 
+.hero-bg-blob-sky-alt {
+  background: var(--color-sky-100);
+  animation-duration: 30s;
+  animation-delay: -18s;
+}
+
+.hero-bg-blob-blush-alt {
+  background: var(--color-blush-200);
+  animation-duration: 25s;
+  animation-delay: -6s;
+}
+
+/* A slow, soft pulse of light at the centre of the scene — the
+   "breathing" layer that gives the composition a sense of depth beyond
+   the drifting blobs and rotating aurora. */
+.hero-bg-breath {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  height: 60%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 70%);
+  filter: blur(40px);
+  animation: hero-breath 8s ease-in-out infinite;
+}
+
+/* A near-invisible layer of film-like grain (SVG fractal noise) so the
+   pastel gradients read as premium/cinematic instead of flat CSS blur. */
+.hero-bg-grain {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+}
+
 .hero-bg-particles {
   position: absolute;
   inset: 0;
@@ -2012,8 +2130,22 @@ svg {
   }
 }
 
+@keyframes hero-breath {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+}
+
 @media (max-width: 640px) {
-  .hero-bg-aurora {
+  .hero-bg-aurora,
+  .hero-bg-breath,
+  .hero-bg-grain {
     display: none;
   }
 
@@ -2029,7 +2161,8 @@ svg {
 @media (prefers-reduced-motion: reduce) {
   .hero-bg-aurora,
   .hero-bg-blob,
-  .hero-bg-particle {
+  .hero-bg-particle,
+  .hero-bg-breath {
     animation: none;
   }
 
@@ -2086,15 +2219,14 @@ svg {
 }
 
 .home-badge {
+  flex-shrink: 0;
   border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.7);
   padding: 0.375rem 1rem;
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--color-ink-700);
-  backdrop-filter: blur(4px);
 }
 
 .home-title {
@@ -2175,6 +2307,128 @@ svg {
   max-width: 24rem;
   font-size: 0.875rem;
   color: var(--color-ink-700);
+}
+
+/* ---------- Approach section (full-height, liquid-glass cards) ---------- */
+
+.approach {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(to bottom right, var(--color-blush-50), var(--color-butter-50), var(--color-sky-50));
+  padding: 6rem 1rem;
+}
+
+@media (min-width: 768px) {
+  .approach {
+    padding: 6rem 2rem;
+  }
+}
+
+.approach-inner {
+  margin: 0 auto;
+  max-width: var(--container-max);
+  width: 100%;
+}
+
+.approach-kicker {
+  font-size: 0.875rem;
+  font-family: var(--font-body);
+  color: var(--color-ink-500);
+  margin-bottom: 1rem;
+}
+
+.approach-heading {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--color-ink-900);
+  font-size: 2.75rem;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 768px) {
+  .approach-heading {
+    font-size: 4rem;
+  }
+}
+
+.approach-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-top: 3.5rem;
+}
+
+@media (min-width: 768px) {
+  .approach-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.approach-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 22rem;
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+}
+
+.approach-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.approach-card-icon {
+  display: flex;
+  height: 2.75rem;
+  width: 2.75rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--color-ink-900);
+}
+
+.approach-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.375rem;
+  max-width: 70%;
+}
+
+.approach-card-tag {
+  flex-shrink: 0;
+  white-space: nowrap;
+  border-radius: var(--radius-full);
+  padding: 0.25rem 0.75rem;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--color-ink-700);
+}
+
+.approach-card-spacer {
+  flex: 1 1 auto;
+}
+
+.approach-card-title {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--color-ink-900);
+  font-size: 1.75rem;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.approach-card-desc {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--color-ink-700);
+  line-height: 1.5;
+  max-width: 32ch;
 }
 
 /* ---------- Product page ---------- */

@@ -35,7 +35,7 @@ export function Header() {
 
   return (
     <>
-      <header className="header">
+      <header className="header liquid-glass">
         <div className="header-bar">
           <button
             type="button"
