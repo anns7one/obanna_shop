@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
-import { useCancelOrder, useMyOrders } from "@/hooks/useOrders";
+import { useCancelOrder, useMyOrders, useRepeatOrder } from "@/hooks/useOrders";
 import { Button } from "@/components/ui/Button";
 import { OrderCard } from "@/components/account/OrderCard";
 import type { Order } from "@/lib/types";
@@ -17,20 +17,36 @@ const TAB_LABEL: Record<Tab, string> = {
   cancelled: "Cancelled",
 };
 
+/** History = completed orders (shipped or delivered) — a shipped order is
+ * no longer "active" even before the customer has actually received it. */
 function tabFor(order: Order): Tab {
   if (order.status === "cancelled") return "cancelled";
-  if (order.status === "delivered") return "history";
+  if (order.status === "shipped" || order.status === "delivered") return "history";
   return "active";
+}
+
+function isTab(value: string | null): value is Tab {
+  return value === "active" || value === "history" || value === "cancelled";
 }
 
 export function OrdersView() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const user = useAuthStore((s) => s.user);
   const { data: orders, isLoading, isError, error, refetch } = useMyOrders(user?.id);
   const cancelOrder = useCancelOrder();
-  const [tab, setTab] = useState<Tab>("active");
+  const repeatOrder = useRepeatOrder();
   const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [repeatingId, setRepeatingId] = useState<string | null>(null);
+  const [repeatNotice, setRepeatNotice] = useState<string | null>(null);
   const justPlacedOrder = searchParams.get("success") === "1";
+
+  const tabParam = searchParams.get("tab");
+  const tab: Tab = isTab(tabParam) ? tabParam : "active";
+
+  function setTab(next: Tab) {
+    router.push(`/account/orders?tab=${next}`);
+  }
 
   const grouped = useMemo(() => {
     const groups: Record<Tab, Order[]> = { active: [], history: [], cancelled: [] };
@@ -43,6 +59,25 @@ export function OrdersView() {
     cancelOrder.mutate(orderId, { onSettled: () => setCancellingId(null) });
   }
 
+  function handleRepeat(order: Order) {
+    setRepeatingId(order.id);
+    setRepeatNotice(null);
+    repeatOrder.mutate(order, {
+      onSuccess: ({ addedCount, skippedCount }) => {
+        setRepeatingId(null);
+        if (addedCount === 0) {
+          setRepeatNotice("None of the items in this order are available anymore.");
+          return;
+        }
+        if (skippedCount > 0) {
+          setRepeatNotice(`${skippedCount} item${skippedCount === 1 ? " is" : "s are"} no longer available and was left out.`);
+        }
+        router.push("/cart");
+      },
+      onError: () => setRepeatingId(null),
+    });
+  }
+
   return (
     <div className="orders">
       <h1 className="orders-title">Orders</h1>
@@ -50,6 +85,12 @@ export function OrdersView() {
       {justPlacedOrder && (
         <div className="orders-success" role="status" aria-live="polite">
           Thank you — your order has been placed.
+        </div>
+      )}
+
+      {repeatNotice && (
+        <div className="orders-notice" role="status" aria-live="polite">
+          {repeatNotice}
         </div>
       )}
 
@@ -79,7 +120,7 @@ export function OrdersView() {
 
       {!isLoading && !isError && (
         <>
-          <div className="orders-tabs" role="tablist">
+          <div className="orders-tabs no-print" role="tablist">
             {(Object.keys(TAB_LABEL) as Tab[]).map((key) => (
               <button
                 key={key}
@@ -100,10 +141,32 @@ export function OrdersView() {
               <div className="orders-empty">
                 <p className="orders-empty-title">
                   {tab === "active" && "No active orders"}
-                  {tab === "history" && "No delivered orders yet"}
+                  {tab === "history" && "No order history yet"}
                   {tab === "cancelled" && "No cancelled orders"}
                 </p>
-                <Button href="/catalog">Start shopping</Button>
+                <div className="orders-empty-actions">
+                  {tab === "active" && (
+                    <Button variant="secondary" onClick={() => setTab("history")}>
+                      View order history
+                    </Button>
+                  )}
+                  {tab === "history" && (
+                    <>
+                      <Button variant="secondary" onClick={() => setTab("active")}>
+                        View current orders
+                      </Button>
+                      <Button variant="secondary" onClick={() => setTab("cancelled")}>
+                        View cancelled history
+                      </Button>
+                    </>
+                  )}
+                  {tab === "cancelled" && (
+                    <Button variant="secondary" onClick={() => setTab("active")}>
+                      View current orders
+                    </Button>
+                  )}
+                  <Button href="/catalog">Go to catalog</Button>
+                </div>
               </div>
             )}
 
@@ -113,6 +176,8 @@ export function OrdersView() {
                 order={order}
                 onCancel={tab === "active" ? handleCancel : undefined}
                 cancelling={cancellingId === order.id}
+                onRepeat={handleRepeat}
+                repeating={repeatingId === order.id}
               />
             ))}
           </div>

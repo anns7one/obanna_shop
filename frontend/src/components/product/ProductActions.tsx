@@ -21,6 +21,7 @@ export function ProductActions({ product }: { product: Product }) {
   const isWishlisted = useWishlistStore((s) => s.productIds.includes(product.id));
   const toggleWishlist = useWishlistStore((s) => s.toggle);
 
+  const [outOfStockMessage, setOutOfStockMessage] = useState(false);
   const outOfStock = product.stock <= 0;
   const addedTimeoutRef = useRef<number | null>(null);
 
@@ -31,7 +32,14 @@ export function ProductActions({ product }: { product: Product }) {
   }, []);
 
   function handleAddToCart() {
-    if (outOfStock) return;
+    if (addedTimeoutRef.current) window.clearTimeout(addedTimeoutRef.current);
+
+    if (outOfStock) {
+      setOutOfStockMessage(true);
+      addedTimeoutRef.current = window.setTimeout(() => setOutOfStockMessage(false), 2500);
+      return;
+    }
+
     addItem({
       productId: product.id,
       slug: product.slug,
@@ -44,7 +52,6 @@ export function ProductActions({ product }: { product: Product }) {
       stock: product.stock,
     });
     setJustAdded(true);
-    if (addedTimeoutRef.current) window.clearTimeout(addedTimeoutRef.current);
     addedTimeoutRef.current = window.setTimeout(() => setJustAdded(false), 2500);
   }
 
@@ -97,7 +104,12 @@ export function ProductActions({ product }: { product: Product }) {
       </div>
 
       <div className="product-actions-controls">
-        <Button onClick={handleAddToCart} disabled={outOfStock} size="lg" fullWidth>
+        <Button
+          onClick={handleAddToCart}
+          variant={outOfStock ? "secondary" : "primary"}
+          size="lg"
+          fullWidth
+        >
           {outOfStock ? "Out of stock" : "Add to cart"}
         </Button>
         <button
@@ -111,8 +123,12 @@ export function ProductActions({ product }: { product: Product }) {
         </button>
       </div>
 
-      <p role="status" aria-live="polite" className={cn("product-actions-status", !justAdded && "sr-only")}>
-        {justAdded ? "Added to your cart." : ""}
+      <p
+        role="status"
+        aria-live="polite"
+        className={cn("product-actions-status", !justAdded && !outOfStockMessage && "sr-only")}
+      >
+        {outOfStockMessage ? "This item is currently out of stock." : justAdded ? "Added to your cart." : ""}
       </p>
     </div>
   );

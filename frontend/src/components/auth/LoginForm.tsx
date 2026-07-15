@@ -12,18 +12,36 @@ import { Input } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
 import { PasswordCat } from "@/components/auth/PasswordCat";
 
-export function LoginForm() {
+const REMEMBERED_EMAIL_KEY = "obanna-remembered-email";
+
+function getRememberedEmail(): string {
+  if (typeof window === "undefined") return "";
+  return window.localStorage.getItem(REMEMBERED_EMAIL_KEY) ?? "";
+}
+
+interface LoginFormProps {
+  /** Provided when rendered inside the header popup — closes the modal
+   * instead of navigating. Omitted on the standalone /login page, which
+   * keeps navigating (e.g. back to the page that required login). */
+  onSuccess?: () => void;
+}
+
+export function LoginForm({ onSuccess }: LoginFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const setUser = useAuthStore((s) => s.setUser);
   const [formError, setFormError] = useState<string | null>(null);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const rememberedEmail = getRememberedEmail();
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<LoginValues>({ resolver: zodResolver(loginSchema) });
+  } = useForm<LoginValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: rememberedEmail, rememberMe: Boolean(rememberedEmail) },
+  });
 
   const passwordField = register("password");
 
@@ -31,8 +49,17 @@ export function LoginForm() {
     setFormError(null);
     try {
       const user = await loginUser(values);
+      if (values.rememberMe) {
+        window.localStorage.setItem(REMEMBERED_EMAIL_KEY, values.email);
+      } else {
+        window.localStorage.removeItem(REMEMBERED_EMAIL_KEY);
+      }
       setUser(user);
-      router.push(searchParams.get("redirect") || "/account");
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        router.push(searchParams.get("redirect") || "/account");
+      }
     } catch (err) {
       setFormError(err instanceof AuthError ? err.message : "Something went wrong. Please try again.");
     }
@@ -62,6 +89,16 @@ export function LoginForm() {
           passwordField.onBlur(e);
         }}
       />
+
+      <div className="auth-form-options">
+        <label className="auth-form-checkbox">
+          <input type="checkbox" {...register("rememberMe")} />
+          Remember me
+        </label>
+        <Link href="/forgot-password" className="auth-form-link">
+          Forgot password?
+        </Link>
+      </div>
 
       {formError && (
         <p role="alert" className="auth-form-error">

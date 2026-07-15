@@ -1,3 +1,5 @@
+import hashlib
+
 import pytest
 from httpx import AsyncClient
 
@@ -15,6 +17,15 @@ ADDRESS = {
 }
 
 
+def _phone_for(email: str) -> str:
+    """A fake but distinct-per-email phone (just digits behind a '+', no
+    assumption about which country's dialing format it represents) — tests
+    need every registered user to have a unique phone now that it's a
+    unique column."""
+    digest = hashlib.md5(email.encode()).hexdigest()
+    return "+" + str(int(digest[:9], 16))[:11]
+
+
 async def _register_and_get_token(client: AsyncClient, email: str = "shopper@example.com") -> str:
     response = await client.post(
         "/api/v1/auth/register",
@@ -24,6 +35,7 @@ async def _register_and_get_token(client: AsyncClient, email: str = "shopper@exa
             "confirmPassword": "Password1",
             "firstName": "Shopper",
             "lastName": "One",
+            "phone": _phone_for(email),
         },
     )
     return response.json()["accessToken"]

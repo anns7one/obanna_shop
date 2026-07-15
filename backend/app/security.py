@@ -1,3 +1,5 @@
+import hashlib
+import secrets
 import uuid
 from datetime import datetime, timedelta, timezone
 from enum import StrEnum
@@ -58,6 +60,20 @@ def create_refresh_token(user_id: str) -> tuple[str, str]:
     ttl = timedelta(days=settings.refresh_token_ttl_days)
     token = _create_token(user_id, TokenType.REFRESH, ttl, jti=jti)
     return token, jti
+
+
+def generate_reset_token() -> tuple[str, str]:
+    """Returns (raw_token, token_hash). The raw token is what goes into the
+    emailed link and is never stored; only its SHA-256 hash is persisted, so
+    a stolen database row can't be replayed as a valid reset link. Unlike
+    passwords, this value is already high-entropy random data, so a fast
+    hash (not bcrypt) is the standard, appropriate choice here."""
+    raw_token = secrets.token_urlsafe(32)
+    return raw_token, hash_reset_token(raw_token)
+
+
+def hash_reset_token(raw_token: str) -> str:
+    return hashlib.sha256(raw_token.encode("utf-8")).hexdigest()
 
 
 class InvalidTokenError(Exception):

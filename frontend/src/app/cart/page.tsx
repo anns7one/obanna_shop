@@ -6,8 +6,14 @@ import { useCartStore, selectCartTotal } from "@/store/cartStore";
 import { ProductImagePlaceholder } from "@/components/ui/ProductImagePlaceholder";
 import { QuantityStepper } from "@/components/ui/QuantityStepper";
 import { Button } from "@/components/ui/Button";
-import { formatPrice } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { useHasMounted } from "@/hooks/useHasMounted";
+
+function stockLabel(stock: number): string {
+  if (stock <= 0) return "Out of stock";
+  if (stock <= 5) return `Only ${stock} left in stock`;
+  return "In stock";
+}
 
 export default function CartPage() {
   const mounted = useHasMounted();
@@ -15,6 +21,7 @@ export default function CartPage() {
   const total = useCartStore(selectCartTotal);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
+  const clear = useCartStore((s) => s.clear);
 
   if (!mounted) {
     return <div className="cart-page" />;
@@ -40,23 +47,31 @@ export default function CartPage() {
         <ul className="cart-page-list">
           {items.map((item) => (
             <li key={`${item.productId}-${item.size}-${item.color}`} className="cart-page-item">
-              <Link href={`/product/${item.slug}`} className="cart-page-thumb">
+              <Link
+                href={`/product/${item.slug}`}
+                className="cart-page-card-link"
+                aria-label={`View ${item.title}`}
+                tabIndex={-1}
+              />
+
+              <div className="cart-page-thumb">
                 <ProductImagePlaceholder
                   title={item.title}
                   category={item.category}
                   compact
                   className="cart-page-img"
                 />
-              </Link>
+              </div>
 
               <div className="cart-page-body">
                 <div className="cart-page-top">
                   <div>
-                    <Link href={`/product/${item.slug}`} className="cart-page-name">
-                      {item.title}
-                    </Link>
+                    <p className="cart-page-name">{item.title}</p>
                     <p className="cart-page-meta">
-                      {item.color} · Size {item.size}
+                      {item.color} · Size {item.size} ·{" "}
+                      <span className={cn("cart-page-stock", item.stock <= 5 && "cart-page-stock-low")}>
+                        {stockLabel(item.stock)}
+                      </span>
                     </p>
                   </div>
                   <button
@@ -76,7 +91,10 @@ export default function CartPage() {
                     onChange={(next) => updateQuantity(item.productId, item.size, item.color, next)}
                     label={item.title}
                   />
-                  <span className="cart-page-price">{formatPrice(item.price * item.quantity)}</span>
+                  <div className="cart-page-price-block">
+                    <span className="cart-page-unit-price">{formatPrice(item.price)} each</span>
+                    <span className="cart-page-price">{formatPrice(item.price * item.quantity)}</span>
+                  </div>
                 </div>
               </div>
             </li>
@@ -102,6 +120,9 @@ export default function CartPage() {
           <Button href="/checkout" size="lg" fullWidth className="cart-page-submit">
             Checkout
           </Button>
+          <button type="button" className="cart-page-clear" onClick={() => clear()}>
+            Clear cart
+          </button>
         </div>
       </div>
     </div>

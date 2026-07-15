@@ -4,6 +4,12 @@ import type { CartItem, Order, ShippingDetails } from "@/lib/types";
 export interface CreateOrderInput {
   items: CartItem[];
   shipping: ShippingDetails;
+  contactFullName: string;
+  contactPhone: string;
+  contactEmail?: string;
+  orderComment?: string;
+  /** Omitted (undefined) means "Cash on delivery" — no saved card chosen. */
+  paymentMethodId?: string;
 }
 
 export async function createOrder(input: CreateOrderInput): Promise<Order> {
@@ -19,6 +25,11 @@ export async function createOrder(input: CreateOrderInput): Promise<Order> {
         quantity: item.quantity,
       })),
       shipping: input.shipping,
+      contactFullName: input.contactFullName,
+      contactPhone: input.contactPhone,
+      contactEmail: input.contactEmail || undefined,
+      orderComment: input.orderComment || undefined,
+      paymentMethodId: input.paymentMethodId,
     }),
   });
 }
@@ -32,4 +43,16 @@ export async function fetchMyOrders(userId: string | undefined): Promise<Order[]
 
 export async function cancelOrder(orderId: string): Promise<Order> {
   return apiFetch<Order>(`/orders/${orderId}/cancel`, { method: "PATCH" });
+}
+
+export async function fetchOrder(orderId: string): Promise<Order> {
+  return apiFetch<Order>(`/orders/${orderId}`);
+}
+
+/** Omitting paymentMethodId switches the order to "Cash on delivery". */
+export async function changeOrderPaymentMethod(orderId: string, paymentMethodId?: string): Promise<Order> {
+  return apiFetch<Order>(`/orders/${orderId}/payment-method`, {
+    method: "PATCH",
+    body: JSON.stringify({ paymentMethodId }),
+  });
 }

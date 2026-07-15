@@ -40,6 +40,7 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
+  phone: string;
 }
 
 export interface ShippingDetails {
@@ -64,11 +65,19 @@ export interface OrderItem {
 
 export interface Order {
   id: string;
+  orderNumber: number;
   userId: string;
   items: OrderItem[];
   totalPrice: number;
   status: OrderStatus;
   shipping: ShippingDetails;
+  contactFullName: string;
+  contactPhone: string;
+  contactEmail?: string;
+  orderComment?: string;
+  paymentMethodLabel: string;
+  deliveryMethodLabel: string;
+  deliveryCost: number;
   createdAt: string;
 }
 

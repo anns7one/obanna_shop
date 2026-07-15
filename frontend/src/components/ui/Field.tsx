@@ -34,18 +34,27 @@ function FieldWrapper({
   );
 }
 
-type InputProps = FieldWrapperProps & InputHTMLAttributes<HTMLInputElement>;
+type InputProps = FieldWrapperProps &
+  InputHTMLAttributes<HTMLInputElement> & {
+    /** Rendered inside the input's own row, absolutely positioned at the
+     * trailing edge — e.g. a show/hide-password toggle. Only affects this
+     * one field's layout, not the label or hint/error text below it. */
+    endAdornment?: React.ReactNode;
+  };
 
-export function Input({ label, error, hint, required, id, className, ...props }: InputProps) {
+export function Input({ label, error, hint, required, id, className, endAdornment, ...props }: InputProps) {
   return (
     <FieldWrapper label={label} id={id} error={error} hint={hint} required={required}>
-      <input
-        id={id}
-        className={cn("field-input", error && "field-input-invalid", className)}
-        aria-invalid={Boolean(error)}
-        required={required}
-        {...props}
-      />
+      <div className="field-input-row">
+        <input
+          id={id}
+          className={cn("field-input", endAdornment && "field-input-with-adornment", error && "field-input-invalid", className)}
+          aria-invalid={Boolean(error)}
+          required={required}
+          {...props}
+        />
+        {endAdornment}
+      </div>
     </FieldWrapper>
   );
 }

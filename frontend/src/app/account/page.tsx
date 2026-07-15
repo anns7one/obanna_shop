@@ -3,6 +3,7 @@
 import { useAuthStore } from "@/store/authStore";
 import { Avatar } from "@/components/account/Avatar";
 import { ProfileForm } from "@/components/account/ProfileForm";
+import { ChangePasswordForm } from "@/components/account/ChangePasswordForm";
 import { Button } from "@/components/ui/Button";
 
 export default function AccountPage() {
@@ -20,6 +21,8 @@ export default function AccountPage() {
       </div>
 
       <ProfileForm />
+
+      <ChangePasswordForm />
 
       <div className="account-page-footer">
         <Button href="/wishlist" variant="ghost" size="sm">

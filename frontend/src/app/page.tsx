@@ -3,7 +3,7 @@ import { categories } from "@/lib/data/categories";
 import { CategoryTile } from "@/components/home/CategoryTile";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { NewsletterForm } from "@/components/home/NewsletterForm";
-import { HeroBackground } from "@/components/home/HeroBackground";
+import { HeroVideoBackground } from "@/components/home/HeroVideoBackground";
 import { ApproachSection } from "@/components/home/ApproachSection";
 import { BlurText } from "@/components/motion/BlurText";
 import { RevealSection } from "@/components/motion/RevealSection";
@@ -15,7 +15,7 @@ export default async function HomePage() {
   return (
     <div>
       <section className="home-hero">
-        <HeroBackground />
+        <HeroVideoBackground />
         <div className="home-inner">
           <span className="home-badge liquid-glass home-fade-in home-fade-in-1">New season</span>
           <h1 className="home-title">

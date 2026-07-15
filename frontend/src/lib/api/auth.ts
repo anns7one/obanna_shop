@@ -14,6 +14,7 @@ export interface RegisterInput {
   password: string;
   firstName: string;
   lastName: string;
+  phone: string;
 }
 
 export async function registerUser(input: RegisterInput): Promise<User> {
@@ -29,6 +30,7 @@ export async function registerUser(input: RegisterInput): Promise<User> {
         confirmPassword: input.password,
         firstName: input.firstName,
         lastName: input.lastName,
+        phone: input.phone,
       }),
     });
     useAuthStore.getState().setAccessToken(accessToken);
@@ -72,8 +74,57 @@ export async function logoutUser(): Promise<void> {
 export interface UpdateProfileInput {
   firstName: string;
   lastName: string;
+  phone: string;
 }
 
 export async function updateProfile(input: UpdateProfileInput): Promise<User> {
   return apiFetch<User>("/auth/me", { method: "PATCH", body: JSON.stringify(input) });
+}
+
+export async function forgotPassword(email: string): Promise<void> {
+  try {
+    await apiFetch<void>("/auth/forgot-password", {
+      method: "POST",
+      skipAuth: true,
+      body: JSON.stringify({ email }),
+    });
+  } catch (err) {
+    if (err instanceof ApiError) throw new AuthError(err.message);
+    throw err;
+  }
+}
+
+export interface ResetPasswordInput {
+  email: string;
+  token: string;
+  password: string;
+  confirmPassword: string;
+}
+
+export async function resetPassword(input: ResetPasswordInput): Promise<void> {
+  try {
+    await apiFetch<void>("/auth/reset-password", {
+      method: "POST",
+      skipAuth: true,
+      body: JSON.stringify(input),
+    });
+  } catch (err) {
+    if (err instanceof ApiError) throw new AuthError(err.message);
+    throw err;
+  }
+}
+
+export interface ChangePasswordInput {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}
+
+export async function changePassword(input: ChangePasswordInput): Promise<void> {
+  try {
+    await apiFetch<void>("/auth/change-password", { method: "POST", body: JSON.stringify(input) });
+  } catch (err) {
+    if (err instanceof ApiError) throw new AuthError(err.message);
+    throw err;
+  }
 }

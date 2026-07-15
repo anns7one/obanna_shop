@@ -1,15 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Heart, Menu, Search, ShoppingBag, User, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { categories } from "@/lib/data/categories";
 import { useCartStore, selectCartCount } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
 import { useAuthStore } from "@/store/authStore";
 import { useHasMounted } from "@/hooks/useHasMounted";
 import { cn } from "@/lib/utils";
+import { Modal } from "@/components/ui/Modal";
+import { LoginForm } from "@/components/auth/LoginForm";
 
 const navLinks = [
   { href: "/catalog", label: "All" },
@@ -22,8 +24,18 @@ export function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [promoOpen, setPromoOpen] = useState(true);
+  const [loginOpen, setLoginOpen] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
   const mounted = useHasMounted();
+
+  // Links inside the login popup (e.g. "Forgot password?", "Create an
+  // account") navigate to a new route without going through onSuccess —
+  // close the popup whenever the route changes so it doesn't linger on top
+  // of the page it just navigated to.
+  useEffect(() => {
+    setLoginOpen(false);
+  }, [pathname]);
 
   const cartCount = useCartStore(selectCartCount);
   const wishlistCount = useWishlistStore((s) => s.productIds.length);
@@ -90,13 +102,20 @@ export function Header() {
               <Search size={20} aria-hidden />
             </button>
 
-            <Link
-              href={user ? "/account" : "/login"}
-              className={cn("header-icon", "header-account")}
-              aria-label={user ? "Account" : "Log in"}
-            >
-              <User size={20} aria-hidden />
-            </Link>
+            {user ? (
+              <Link href="/account" className={cn("header-icon", "header-account")} aria-label="Account">
+                <User size={20} aria-hidden />
+              </Link>
+            ) : (
+              <button
+                type="button"
+                className={cn("header-icon", "header-account")}
+                aria-label="Log in"
+                onClick={() => setLoginOpen(true)}
+              >
+                <User size={20} aria-hidden />
+              </button>
+            )}
 
             <Link
               href="/wishlist"
@@ -170,16 +189,29 @@ export function Header() {
               </Link>
             ))}
             <div className="header-divider" />
-            <Link
-              href={user ? "/account" : "/login"}
-              onClick={() => setMenuOpen(false)}
-              className="header-item"
-            >
-              {user ? "My account" : "Log in"}
-            </Link>
+            {user ? (
+              <Link href="/account" onClick={() => setMenuOpen(false)} className="header-item">
+                My account
+              </Link>
+            ) : (
+              <button
+                type="button"
+                className="header-item header-item-button"
+                onClick={() => {
+                  setMenuOpen(false);
+                  setLoginOpen(true);
+                }}
+              >
+                Log in
+              </button>
+            )}
           </nav>
         </div>
       </div>
+
+      <Modal open={loginOpen} onClose={() => setLoginOpen(false)} title="Sign in">
+        <LoginForm onSuccess={() => setLoginOpen(false)} />
+      </Modal>
     </>
   );
 }

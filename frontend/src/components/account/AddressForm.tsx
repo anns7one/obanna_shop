@@ -12,9 +12,12 @@ interface AddressFormProps {
   submitting?: boolean;
   onSubmit: (values: AddressFormValues) => void;
   onCancel: () => void;
+  /** Distinguishes this form's field ids from another form on the same
+   * page — e.g. checkout also has its own "Full name"/"Phone" fields. */
+  idPrefix?: string;
 }
 
-export function AddressForm({ initial, submitting = false, onSubmit, onCancel }: AddressFormProps) {
+export function AddressForm({ initial, submitting = false, onSubmit, onCancel, idPrefix = "" }: AddressFormProps) {
   const {
     register,
     handleSubmit,
@@ -38,20 +41,41 @@ export function AddressForm({ initial, submitting = false, onSubmit, onCancel }:
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="address-form">
       <div className="address-form-row">
-        <Input id="label" label="Label" placeholder="Home, Work…" error={errors.label?.message} {...register("label")} />
-        <Input id="fullName" label="Full name" error={errors.fullName?.message} {...register("fullName")} />
+        <Input
+          id={`${idPrefix}label`}
+          label="Label"
+          placeholder="Home, Work…"
+          error={errors.label?.message}
+          {...register("label")}
+        />
+        <Input
+          id={`${idPrefix}addressFullName`}
+          label="Full name"
+          error={errors.fullName?.message}
+          {...register("fullName")}
+        />
       </div>
 
-      <Input id="address" label="Address" error={errors.address?.message} {...register("address")} />
+      <Input id={`${idPrefix}address`} label="Address" error={errors.address?.message} {...register("address")} />
 
       <div className="address-form-row">
-        <Input id="city" label="City" error={errors.city?.message} {...register("city")} />
-        <Input id="postalCode" label="Postal code" error={errors.postalCode?.message} {...register("postalCode")} />
+        <Input id={`${idPrefix}city`} label="City" error={errors.city?.message} {...register("city")} />
+        <Input
+          id={`${idPrefix}postalCode`}
+          label="Postal code"
+          error={errors.postalCode?.message}
+          {...register("postalCode")}
+        />
       </div>
 
       <div className="address-form-row">
-        <Input id="country" label="Country" error={errors.country?.message} {...register("country")} />
-        <Input id="phone" label="Phone" error={errors.phone?.message} {...register("phone")} />
+        <Input id={`${idPrefix}country`} label="Country" error={errors.country?.message} {...register("country")} />
+        <Input
+          id={`${idPrefix}addressPhone`}
+          label="Phone"
+          error={errors.phone?.message}
+          {...register("phone")}
+        />
       </div>
 
       <label className="address-form-default">

@@ -8,6 +8,7 @@ import Link from "next/link";
 import { registerSchema, type RegisterValues } from "@/lib/validation";
 import { registerUser, AuthError } from "@/lib/api/auth";
 import { useAuthStore } from "@/store/authStore";
+import { sanitizePhoneInput } from "@/lib/phone";
 import { Input } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
 import { PasswordCat } from "@/components/auth/PasswordCat";
@@ -22,10 +23,12 @@ export function RegisterForm() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
-  } = useForm<RegisterValues>({ resolver: zodResolver(registerSchema) });
+  } = useForm<RegisterValues>({ resolver: zodResolver(registerSchema), defaultValues: { consent: false } });
 
   const passwordField = register("password");
+  const phoneField = register("phone");
 
   async function onSubmit(values: RegisterValues) {
     setFormError(null);
@@ -66,6 +69,18 @@ export function RegisterForm() {
         {...register("email")}
       />
       <Input
+        id="phone"
+        label="Phone"
+        type="tel"
+        autoComplete="tel"
+        error={errors.phone?.message}
+        {...phoneField}
+        onChange={(e) => {
+          e.target.value = sanitizePhoneInput(e.target.value);
+          phoneField.onChange(e);
+        }}
+      />
+      <Input
         id="password"
         label="Password"
         type="password"
@@ -87,6 +102,21 @@ export function RegisterForm() {
         error={errors.confirmPassword?.message}
         {...register("confirmPassword")}
       />
+
+      <div className="field">
+        <label className="auth-form-checkbox">
+          <input
+            type="checkbox"
+            onChange={(e) => setValue("consent", e.target.checked, { shouldValidate: true })}
+          />
+          I agree to the processing of my personal data.
+        </label>
+        {errors.consent && (
+          <p role="alert" className="field-error">
+            {errors.consent.message}
+          </p>
+        )}
+      </div>
 
       {formError && (
         <p role="alert" className="auth-form-error">

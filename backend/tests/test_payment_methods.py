@@ -1,9 +1,20 @@
+import hashlib
+
 import pytest
 from httpx import AsyncClient
 
 from app.models.payment_method import PaymentMethod
 
 pytestmark = pytest.mark.asyncio(loop_scope="session")
+
+
+def _phone_for(email: str) -> str:
+    """A fake but distinct-per-email phone (just digits behind a '+', no
+    assumption about which country's dialing format it represents) — tests
+    need every registered user to have a unique phone now that it's a
+    unique column."""
+    digest = hashlib.md5(email.encode()).hexdigest()
+    return "+" + str(int(digest[:9], 16))[:11]
 
 
 async def _register_and_get_token(client: AsyncClient, email: str = "cardholder@example.com") -> str:
@@ -15,6 +26,7 @@ async def _register_and_get_token(client: AsyncClient, email: str = "cardholder@
             "confirmPassword": "Password1",
             "firstName": "Card",
             "lastName": "Holder",
+            "phone": _phone_for(email),
         },
     )
     return response.json()["accessToken"]

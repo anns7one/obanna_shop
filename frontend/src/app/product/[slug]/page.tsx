@@ -5,6 +5,7 @@ import { fetchProductBySlug, fetchRelatedProducts } from "@/lib/api/products";
 import { ProductImagePlaceholder } from "@/components/ui/ProductImagePlaceholder";
 import { PriceTag } from "@/components/ui/PriceTag";
 import { ProductActions } from "@/components/product/ProductActions";
+import { ProductStockNotice } from "@/components/product/ProductStockNotice";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { getCategory } from "@/lib/data/categories";
 import { RevealSection } from "@/components/motion/RevealSection";
@@ -61,10 +62,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
           <ProductActions product={product} />
 
-          <p className="product-page-stock">
-            {product.stock > 0 ? `${product.stock} in stock` : "Currently unavailable"} · Free returns
-            within 30 days.
-          </p>
+          <ProductStockNotice stock={product.stock} />
         </div>
       </div>
 

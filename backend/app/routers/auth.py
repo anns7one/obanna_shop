@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
 from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, Response, status
@@ -8,19 +9,37 @@ from app.config import get_settings
 from app.core.rate_limit import limiter
 from app.database import get_db
 from app.dependencies import get_current_user
+from app.models.password_reset_token import PasswordResetToken
 from app.models.user import User
-from app.redis_client import get_refresh_session_user, revoke_refresh_session, store_refresh_session
+from app.redis_client import (
+    get_refresh_session_user,
+    revoke_all_user_sessions,
+    revoke_refresh_session,
+    store_refresh_session,
+)
 from app.schemas.auth import AccessTokenResponse, AuthResponse
-from app.schemas.user import LoginRequest, RegisterRequest, UserRead, UserUpdate
+from app.schemas.user import (
+    ChangePasswordRequest,
+    ForgotPasswordRequest,
+    LoginRequest,
+    RegisterRequest,
+    ResetPasswordRequest,
+    UserRead,
+    UserUpdate,
+)
 from app.security import (
     InvalidTokenError,
     TokenType,
     create_access_token,
     create_refresh_token,
     decode_token,
+    generate_reset_token,
     hash_password,
+    hash_reset_token,
     verify_password,
 )
+
+RESET_TOKEN_TTL_MINUTES = 60
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 settings = get_settings()
@@ -61,11 +80,18 @@ async def register(request: Request, payload: RegisterRequest, response: Respons
     if existing is not None:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="An account with this email already exists")
 
+    existing_phone = await db.scalar(select(User).where(User.phone == payload.phone))
+    if existing_phone is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="An account with this phone number already exists"
+        )
+
     user = User(
         email=email,
         password_hash=hash_password(payload.password),
         first_name=payload.first_name,
         last_name=payload.last_name,
+        phone=payload.phone,
     )
     db.add(user)
     await db.commit()
@@ -135,7 +161,7 @@ async def logout(
         if payload is not None:
             jti = payload.get("jti")
             if jti:
-                await revoke_refresh_session(jti)
+                await revoke_refresh_session(jti, user_id=payload.get("sub"))
 
     response.delete_cookie(key=REFRESH_COOKIE_NAME, path=REFRESH_COOKIE_PATH)
 
@@ -147,8 +173,76 @@ async def me(current_user: CurrentUser) -> UserRead:
 
 @router.patch("/me", response_model=UserRead)
 async def update_me(payload: UserUpdate, current_user: CurrentUser, db: DbSession) -> UserRead:
+    existing_phone = await db.scalar(
+        select(User).where(User.phone == payload.phone, User.id != current_user.id)
+    )
+    if existing_phone is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="An account with this phone number already exists"
+        )
+
     current_user.first_name = payload.first_name
     current_user.last_name = payload.last_name
+    current_user.phone = payload.phone
     await db.commit()
     await db.refresh(current_user)
     return UserRead.model_validate(current_user)
+
+
+@router.post("/forgot-password", status_code=status.HTTP_204_NO_CONTENT)
+@limiter.limit("5/minute")
+async def forgot_password(request: Request, payload: ForgotPasswordRequest, db: DbSession) -> None:
+    """Always responds the same way whether or not the email is registered,
+    so this endpoint can't be used to discover which emails have accounts."""
+    user = await db.scalar(select(User).where(User.email == payload.email.lower()))
+    if user is not None:
+        raw_token, token_hash = generate_reset_token()
+        expires_at = datetime.now(timezone.utc) + timedelta(minutes=RESET_TOKEN_TTL_MINUTES)
+        db.add(PasswordResetToken(user_id=user.id, token_hash=token_hash, expires_at=expires_at))
+        await db.commit()
+
+        reset_link = f"{settings.cors_origin_list[0]}/reset-password?token={raw_token}&email={user.email}"
+        # Stub for this stage — no email provider is configured yet, so the
+        # reset link is surfaced in the server log instead of being emailed.
+        print(f"[password-reset-stub] link for {user.email}: {reset_link}")
+
+
+@router.post("/reset-password", status_code=status.HTTP_204_NO_CONTENT)
+@limiter.limit("5/minute")
+async def reset_password(request: Request, payload: ResetPasswordRequest, db: DbSession) -> None:
+    invalid = HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid or expired reset link")
+
+    user = await db.scalar(select(User).where(User.email == payload.email.lower()))
+    if user is None:
+        raise invalid
+
+    token_hash = hash_reset_token(payload.token)
+    reset_token = await db.scalar(
+        select(PasswordResetToken).where(
+            PasswordResetToken.token_hash == token_hash,
+            PasswordResetToken.user_id == user.id,
+        )
+    )
+    now = datetime.now(timezone.utc)
+    if reset_token is None or reset_token.used_at is not None or reset_token.expires_at < now:
+        raise invalid
+
+    user.password_hash = hash_password(payload.password)
+    reset_token.used_at = now
+    await db.commit()
+
+    # A password reset is the "I think someone else has access" flow — kill
+    # every existing session, not just issue a new password.
+    await revoke_all_user_sessions(user.id)
+
+
+@router.post("/change-password", status_code=status.HTTP_204_NO_CONTENT)
+@limiter.limit("10/minute")
+async def change_password(
+    request: Request, payload: ChangePasswordRequest, current_user: CurrentUser, db: DbSession
+) -> None:
+    if not verify_password(payload.current_password, current_user.password_hash):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Current password is incorrect")
+
+    current_user.password_hash = hash_password(payload.new_password)
+    await db.commit()

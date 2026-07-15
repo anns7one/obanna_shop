@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { profileSchema, type ProfileValues } from "@/lib/validation";
 import { useAuthStore } from "@/store/authStore";
 import { useUpdateProfile } from "@/hooks/useProfile";
+import { sanitizePhoneInput } from "@/lib/phone";
 import { Input } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
 import { ApiError } from "@/lib/api/client";
@@ -22,8 +23,10 @@ export function ProfileForm() {
     formState: { errors, isSubmitting, isDirty },
   } = useForm<ProfileValues>({
     resolver: zodResolver(profileSchema),
-    defaultValues: { firstName: user?.firstName ?? "", lastName: user?.lastName ?? "" },
+    defaultValues: { firstName: user?.firstName ?? "", lastName: user?.lastName ?? "", phone: user?.phone ?? "" },
   });
+
+  const phoneField = register("phone");
 
   if (!user) return null;
 
@@ -58,6 +61,19 @@ export function ProfileForm() {
       </div>
 
       <Input id="email" label="Email" defaultValue={user.email} disabled hint="Email can't be changed yet." />
+
+      <Input
+        id="phone"
+        label="Phone"
+        type="tel"
+        autoComplete="tel"
+        error={errors.phone?.message}
+        {...phoneField}
+        onChange={(e) => {
+          e.target.value = sanitizePhoneInput(e.target.value);
+          phoneField.onChange(e);
+        }}
+      />
 
       {formError && (
         <p role="alert" className="auth-form-error">

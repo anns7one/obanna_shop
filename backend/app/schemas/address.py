@@ -1,8 +1,7 @@
-import re
-
 from pydantic import Field, field_validator
 
 from app.schemas.common import CamelModel
+from app.validators import validate_name_characters, validate_phone_format, validate_safe_text
 
 
 class AddressIn(CamelModel):
@@ -15,12 +14,20 @@ class AddressIn(CamelModel):
     phone: str = Field(min_length=6)
     is_default: bool = False
 
+    @field_validator("full_name")
+    @classmethod
+    def full_name_characters(cls, value: str) -> str:
+        return validate_name_characters(value)
+
+    @field_validator("address", "city", "postal_code", "country")
+    @classmethod
+    def safe_text(cls, value: str) -> str:
+        return validate_safe_text(value)
+
     @field_validator("phone")
     @classmethod
     def phone_format(cls, value: str) -> str:
-        if not re.match(r"^[0-9+()\-\s]+$", value):
-            raise ValueError("Invalid phone number format")
-        return value
+        return validate_phone_format(value)
 
 
 class AddressRead(CamelModel):
