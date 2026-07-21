@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Obanna",
+  title: "Privacy Policy — OBA Atelier",
 };
 
 export default function PrivacyPolicyPage() {
@@ -40,7 +40,7 @@ export default function PrivacyPolicyPage() {
         <p>
           You can review and update your personal data, saved addresses and saved cards at any time from your
           account, or ask us to delete your account entirely by contacting{" "}
-          <a href="mailto:hello@obanna.shop">hello@obanna.shop</a>.
+          <a href="mailto:hello@obaatelier.com">hello@obaatelier.com</a>.
         </p>
       </section>
     </div>

@@ -4,7 +4,7 @@ import { RegisterForm } from "@/components/auth/RegisterForm";
 import { BlurText } from "@/components/motion/BlurText";
 
 export const metadata: Metadata = {
-  title: "Create account — Obanna",
+  title: "Create account — OBA Atelier",
 };
 
 export default function RegisterPage() {

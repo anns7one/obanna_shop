@@ -4,7 +4,7 @@ import { LoginForm } from "@/components/auth/LoginForm";
 import { BlurText } from "@/components/motion/BlurText";
 
 export const metadata: Metadata = {
-  title: "Sign in — Obanna",
+  title: "Sign in — OBA Atelier",
 };
 
 export default function LoginPage() {

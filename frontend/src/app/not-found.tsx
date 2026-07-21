@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Button } from "@/components/ui/Button";
 
 export const metadata: Metadata = {
-  title: "Page not found — Obanna",
+  title: "Page not found — OBA Atelier",
 };
 
 export default function NotFound() {

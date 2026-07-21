@@ -11,7 +11,7 @@ from app.routers import addresses, auth, catalog, orders, payment_methods
 
 settings = get_settings()
 
-app = FastAPI(title="Obanna API", version="1.0.0")
+app = FastAPI(title="OBA Atelier API", version="1.0.0")
 
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)

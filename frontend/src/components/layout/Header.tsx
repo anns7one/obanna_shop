@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { Heart, Menu, Search, ShoppingBag, User, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { categories } from "@/lib/data/categories";
 import { useCartStore, selectCartCount } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
@@ -12,6 +12,7 @@ import { useHasMounted } from "@/hooks/useHasMounted";
 import { cn } from "@/lib/utils";
 import { Modal } from "@/components/ui/Modal";
 import { LoginForm } from "@/components/auth/LoginForm";
+import { Logo } from "@/components/layout/Logo";
 
 const navLinks = [
   { href: "/catalog", label: "All" },
@@ -32,10 +33,14 @@ export function Header() {
   // Links inside the login popup (e.g. "Forgot password?", "Create an
   // account") navigate to a new route without going through onSuccess —
   // close the popup whenever the route changes so it doesn't linger on top
-  // of the page it just navigated to.
-  useEffect(() => {
+  // of the page it just navigated to. Adjusting state during render (the
+  // React-recommended pattern for "reset when a value changes") instead of
+  // an effect avoids an extra, unnecessary render pass.
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
     setLoginOpen(false);
-  }, [pathname]);
+  }
 
   const cartCount = useCartStore(selectCartCount);
   const wishlistCount = useWishlistStore((s) => s.productIds.length);
@@ -75,8 +80,9 @@ export function Header() {
             <Menu size={20} aria-hidden />
           </button>
 
-          <Link href="/" className="header-logo">
-            Obanna
+          <Link href="/" className="header-logo" aria-label="OBA Atelier — home">
+            <Logo variant="monogram" className="header-logo-mark header-logo-mark-mobile" />
+            <Logo variant="wordmark" className="header-logo-mark header-logo-mark-desktop" />
           </Link>
 
           <nav className="header-nav">

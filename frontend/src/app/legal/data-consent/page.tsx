@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Personal Data Processing Consent — Obanna",
+  title: "Personal Data Processing Consent — OBA Atelier",
 };
 
 export default function DataConsentPage() {
@@ -13,7 +13,7 @@ export default function DataConsentPage() {
       <section className="legal-page-section">
         <h2>What you&apos;re agreeing to</h2>
         <p>
-          By checking the consent box during registration or checkout, you agree to let Obanna process the
+          By checking the consent box during registration or checkout, you agree to let OBA Atelier process the
           personal data you provide — name, email, phone number, delivery address, and order details — for
           the purpose of creating your account, processing your orders, and contacting you about them.
         </p>
@@ -32,7 +32,7 @@ export default function DataConsentPage() {
         <h2>Withdrawing consent</h2>
         <p>
           You can withdraw this consent at any time by deleting your account, or by contacting{" "}
-          <a href="mailto:hello@obanna.shop">hello@obanna.shop</a>. See our{" "}
+          <a href="mailto:hello@obaatelier.com">hello@obaatelier.com</a>. See our{" "}
           <a href="/legal/privacy-policy">Privacy Policy</a> for details on how your data is handled.
         </p>
       </section>

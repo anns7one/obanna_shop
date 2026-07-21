@@ -4,7 +4,7 @@ import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
 import { BlurText } from "@/components/motion/BlurText";
 
 export const metadata: Metadata = {
-  title: "Change password — Obanna",
+  title: "Change password — OBA Atelier",
 };
 
 export default function ResetPasswordPage() {

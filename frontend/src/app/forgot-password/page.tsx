@@ -4,7 +4,7 @@ import { ForgotPasswordForm } from "@/components/auth/ForgotPasswordForm";
 import { BlurText } from "@/components/motion/BlurText";
 
 export const metadata: Metadata = {
-  title: "Recover password — Obanna",
+  title: "Recover password — OBA Atelier",
 };
 
 export default function ForgotPasswordPage() {

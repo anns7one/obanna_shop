@@ -6,8 +6,8 @@ _NAME_PUNCTUATION = {" ", "-", "'", "’"}
 
 def validate_phone_format(value: str) -> str:
     """Deliberately not tied to any one country's dialing pattern (e.g. a
-    fixed +7(...)...-..-.. mask) — Obanna's customers aren't limited to one
-    country, so this only checks for a plausible international shape:
+    fixed +7(...)...-..-.. mask) — OBA Atelier's customers aren't limited to
+    one country, so this only checks for a plausible international shape:
     digits plus common separators, no letters or other symbols."""
     value = value.strip()
     if not re.fullmatch(r"[0-9+()\-\s]{6,30}", value):

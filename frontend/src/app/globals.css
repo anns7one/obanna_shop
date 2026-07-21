@@ -729,15 +729,33 @@ svg {
 }
 
 .header-logo {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
   color: var(--color-ink-900);
 }
 
+.header-logo-mark {
+  color: currentColor;
+}
+
+.header-logo-mark-mobile {
+  width: 34px;
+  height: 34px;
+}
+
+.header-logo-mark-desktop {
+  display: none;
+}
+
 @media (min-width: 768px) {
-  .header-logo {
-    font-size: 1.5rem;
+  .header-logo-mark-mobile {
+    display: none;
+  }
+
+  .header-logo-mark-desktop {
+    display: block;
+    width: 108px;
+    height: auto;
   }
 }
 
@@ -1055,10 +1073,30 @@ svg {
   }
 }
 
-.footer-logo {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
+.footer-logo-mark {
+  width: 220px;
   color: var(--color-ink-900);
+}
+
+/* Georgia rather than var(--font-display): at this small a size, Playfair
+   Display picked up color-fringed antialiasing on some displays — Georgia
+   is the same revival-serif family tree without that issue. */
+.logo-full-atelier {
+  margin-top: -0.25rem;
+  text-align: center;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.875rem;
+  letter-spacing: 0.4em;
+  color: currentColor;
+}
+
+.logo-full-tagline {
+  margin-top: 0.125rem;
+  text-align: center;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.625rem;
+  letter-spacing: 0.2em;
+  color: currentColor;
 }
 
 .footer-tagline {

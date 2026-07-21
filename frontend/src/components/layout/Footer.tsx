@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { categories } from "@/lib/data/categories";
+import { Logo } from "@/components/layout/Logo";
 
 export function Footer() {
   return (
     <footer className="footer">
       <div className="footer-grid">
         <div className="footer-brand">
-          <span className="footer-logo">Obanna</span>
+          <Logo variant="full" className="footer-logo-mark" />
           <p className="footer-tagline">
             A quiet, considered showroom of everyday clothing and accessories.
           </p>
@@ -50,7 +51,7 @@ export function Footer() {
           <h3 className="footer-title">Support</h3>
           <ul className="footer-list">
             <li>
-              <span className="footer-text">hello@obanna.shop</span>
+              <span className="footer-text">hello@obaatelier.com</span>
             </li>
             <li>
               <span className="footer-text">Shipping &amp; returns</span>
@@ -58,7 +59,7 @@ export function Footer() {
           </ul>
         </div>
       </div>
-      <div className="footer-bottom">© {new Date().getFullYear()} Obanna. All rights reserved.</div>
+      <div className="footer-bottom">© {new Date().getFullYear()} OBA Atelier. All rights reserved.</div>
     </footer>
   );
 }

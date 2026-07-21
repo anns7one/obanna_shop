@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { CatalogView } from "@/components/catalog/CatalogView";
 
 export const metadata: Metadata = {
-  title: "Shop all — Obanna",
+  title: "Shop all — OBA Atelier",
 };
 
 export default function CatalogPage() {

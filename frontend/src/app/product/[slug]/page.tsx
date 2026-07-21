@@ -17,7 +17,7 @@ interface ProductPageProps {
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
   const product = await fetchProductBySlug(slug);
-  return { title: product ? `${product.title} — Obanna` : "Product not found — Obanna" };
+  return { title: product ? `${product.title} — OBA Atelier` : "Product not found — OBA Atelier" };
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
